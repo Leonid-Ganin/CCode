@@ -1,8 +1,16 @@
+local BLOCK = require 'Core.Modules.interface-block'
 local M = {}
+
+local genBlocks = function(scroll)
+    for i = 1, #LOCAL.apps do
+        BLOCK.new(GET_GAME_CODE(LOCAL.apps[i]).title, scroll, M.group, 'programs')
+    end
+end
 
 M.create = function()
     M.group = display.newGroup()
     M.group.isVisible = false
+    M.group.data = {}
 
     local bg = display.newImage('Sprites/bg.png', CENTER_X, CENTER_Y)
         bg.width = DISPLAY_WIDTH
@@ -38,6 +46,16 @@ M.create = function()
         but_okay.button = 'but_okay'
         but_okay:addEventListener('touch', require 'Core.Interfaces.programs')
     M.group:insert(but_okay)
+
+    local scroll = WIDGET.newScrollView({
+            x = CENTER_X, y = (but_add.y - but_add.height / 2 - 30 + but_list.y + 72) / 2,
+            width = DISPLAY_WIDTH, height = but_add.y - but_add.height / 2 - but_list.y - 102,
+            hideBackground = true, hideScrollBar = true,
+            horizontalScrollDisabled = true, isBounceEnabled = true
+        })
+    M.group:insert(scroll)
+
+    genBlocks(scroll)
 end
 
 return M

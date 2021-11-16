@@ -3,6 +3,7 @@ LANG, STR = {}, {}
 EXITS = require 'Core.Interfaces.exits'
 SVG = require 'plugin.nanosvg'
 JSON = require 'json'
+WIDGET = require 'widget'
 LOCAL = require 'Core.Data.local'
 LANG.ru = require 'Strings.ru'
 LANG.en = require 'Strings.en'
@@ -18,6 +19,18 @@ ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2
 MAX_X = CENTER_X + DISPLAY_WIDTH / 2
 MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2
 
+GET_GAME_CODE = function(link)
+    local path = system.pathForFile(link .. '/game.json', system.DocumentsDirectory)
+    local file, data = io.open(path, 'r'), {}
+
+    if file then
+        data = JSON.decode(file:read('*a'))
+        io.close(file)
+    end
+
+    return data
+end
+
 TESTERS = {
   ['f18459bab08fffce'] = 'Версия Тестеров:  Лёня Ганин',
   ['0d51c9f50fe7f485'] = 'Версия Тестеров:  Danil Nik',
@@ -32,6 +45,5 @@ TESTERS = {
   ['37ed97a3066ba4ae'] = 'Версия Тестеров:  Ηυmble',
   ['f502ba2473c3742e'] = 'Версия Тестеров:  Gamma',
   ['c4e8c5f2a541577c'] = 'Версия Тестеров:  Trb.exe',
-  ['651df389613d7eed8462832d8624a41d'] = 'Версия Тестеров:  Лёня Ганин',
-  ['7322b4702b2b7a93ca9f8a45a91c015f'] = 'Версия Тестеров:  Лёня Ганин'
+  ['77640e8dd45608e1f1ee4b1c188d5fec'] = 'Версия Тестеров:  Лёня Ганин'
 }

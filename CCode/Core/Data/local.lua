@@ -14,6 +14,7 @@ else
         status = false,
         first = true,
         ui = true,
+        apps = {},
         repository = {}
     }
 
