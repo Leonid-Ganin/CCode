@@ -1,10 +1,20 @@
+local LOCAL_STR = {
+    'program.images',
+    'program.scripts',
+    'program.sounds',
+    'program.videos',
+    'program.fonts',
+    'menu.settings',
+    'program.export',
+    'program.build'
+}
+
 local BLOCK = require 'Core.Modules.interface-block'
 local M = {}
-local LOCAL = {'images', 'scripts', 'sounds', 'videos', 'fonts'}
 
 local genBlocks = function(scroll)
-    for i = 1, #LOCAL do
-        BLOCK.new(STR['program.' .. LOCAL[i]], scroll, M.group, 'program')
+    for i = 1, #LOCAL_STR do
+        BLOCK.new(STR[LOCAL_STR[i]], scroll, M.group, 'program', #M.group.blocks + 1)
     end
 end
 
@@ -12,6 +22,7 @@ M.create = function(app)
     M.group = display.newGroup()
     M.group.isVisible = false
     M.group.data = {}
+    M.group.blocks = {}
 
     local bg = display.newImage('Sprites/bg.png', CENTER_X, CENTER_Y)
         bg.width = DISPLAY_WIDTH
@@ -32,8 +43,7 @@ M.create = function(app)
     local scroll = WIDGET.newScrollView({
             x = CENTER_X, y = (but_play.y - but_play.height / 2 - 30 + (ZERO_Y + 62) + 72) / 2,
             width = DISPLAY_WIDTH, height = but_play.y - but_play.height / 2 - (ZERO_Y + 62) - 102,
-            hideBackground = true, hideScrollBar = true, isBounceEnabled = true,
-            horizontalScrollDisabled = true
+            hideBackground = true, hideScrollBar = true, isBounceEnabled = false, horizontalScrollDisabled = true
         })
     M.group:insert(scroll)
 

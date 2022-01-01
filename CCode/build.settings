@@ -20,12 +20,18 @@ settings =
 		}
 	},
 
+	window = {
+		defaultViewWidth = 360,
+		defaultViewHeight = 640
+	},
+
 	splashScreen = {
-    enable = false
-  },
+	    enable = false
+	 },
 
 	plugins = {
 		['plugin.cnkFileManager'] = {publisherId = 'es.cnksoft'},
+		['plugin.pasteboard'] = {publisherId = 'com.coronalabs'},
 		['plugin.utf8'] = {publisherId = 'com.coronalabs'},
 		['plugin.zip'] = {publisherId = 'com.coronalabs'},
 		['plugin.notifications.v2'] = {publisherId = 'com.coronalabs'},

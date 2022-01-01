@@ -1,10 +1,29 @@
 local listeners = {}
+local INPUT = require 'Core.Modules.interface-input'
+local LIST = require 'Core.Modules.interface-list'
+local MOVE = require 'Core.Modules.logic-move'
+
+listeners.but_add = function(target)
+end
 
 listeners.but_play = function(target)
 end
 
+listeners.but_list = function(target)
+    if #BLOCKS.group.blocks == 0 then
+        local list = {STR['button.remove'], STR['button.rename'], STR['button.copy']}
+    end
+end
+
+listeners.but_okay = function(target)
+    ALERT = true
+
+    if INDEX_LIST == 1 then
+    end
+end
+
 return function(e)
-    if PROGRAM.group.isVisible and ALERT then
+    if BLOCKS.group.isVisible and (ALERT or e.target.button == 'but_okay') then
         if e.phase == 'began' then
             display.getCurrentStage():setFocus(e.target)
             e.target.click = true

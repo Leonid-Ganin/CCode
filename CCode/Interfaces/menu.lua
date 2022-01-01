@@ -25,7 +25,7 @@ M.create = function()
         but_social:addEventListener('touch', require 'Core.Interfaces.menu')
     M.group:insert(but_social)
 
-    local but_myprogram = display.newImage('Sprites/menubut.png', CENTER_X, CENTER_Y, 396, 138)
+    local but_myprogram = display.newImage('Sprites/menubut.png', CENTER_X, title.y + 550, 396, 138)
         but_myprogram.alpha = 0.9
         but_myprogram.button = 'but_myprogram'
         but_myprogram:addEventListener('touch', require 'Core.Interfaces.menu')
@@ -40,18 +40,18 @@ M.create = function()
         })
     M.group:insert(text_myprogram)
 
-    local delimiter1 = display.newRect(CENTER_X, CENTER_Y - 100, 300, 5)
+    local delimiter1 = display.newRect(CENTER_X, title.y + 450, 300, 5)
         delimiter1:setFillColor(0.3)
     M.group:insert(delimiter1)
 
-    local but_continue = display.newImage('Sprites/menubut.png', CENTER_X, CENTER_Y - 200, 396, 138)
+    local but_continue = display.newImage('Sprites/menubut.png', CENTER_X, title.y + 350, 396, 138)
         but_continue.alpha = 0.9
         but_continue.button = 'but_continue'
         but_continue:addEventListener('touch', require 'Core.Interfaces.menu')
     M.group:insert(but_continue)
 
     local text_continue = display.newText({
-            text = STR['menu.continue'],
+            text = (LOCAL.last and LOCAL.last ~= '') and LOCAL.last or STR['menu.continue'],
             x = CENTER_X, y = but_continue.y,
             font = 'ubuntu', fontSize = 42,
             width = but_myprogram.width - 10, height = but_myprogram.height / 2.7,
@@ -59,27 +59,42 @@ M.create = function()
         })
     M.group:insert(text_continue)
 
-    local delimiter2 = display.newRect(CENTER_X, CENTER_Y + 100, 300, 5)
+    local delimiter2 = display.newRect(CENTER_X, title.y + 650, 300, 5)
         delimiter2:setFillColor(0.3)
     M.group:insert(delimiter2)
 
-    local but_settings = display.newImage('Sprites/menubut.png', CENTER_X, CENTER_Y + 200, 396, 138)
+    local but_settings = display.newImage('Sprites/menubut.png', CENTER_X, title.y + 750, 396, 138)
         but_settings.alpha = 0.9
         but_settings.button = 'but_settings'
         but_settings:addEventListener('touch', require 'Core.Interfaces.menu')
     M.group:insert(but_settings)
 
-    local text_continue = display.newText({
+    local text_settings = display.newText({
             text = STR['menu.settings'],
             x = CENTER_X, y = but_settings.y,
             font = 'ubuntu', fontSize = 42,
             width = but_myprogram.width - 10, height = but_myprogram.height / 2.7,
             align = 'center'
         })
-    M.group:insert(text_continue)
+    M.group:insert(text_settings)
 
     local build = display.newText('Build: ' .. BUILD, MAX_X - 100, MAX_Y - 40, 'sans', 27)
     M.group:insert(build)
+
+    local snowflakes = display.newImage('Sprites/snowflakes.png', CENTER_X, CENTER_Y)
+        snowflakes.alpha = 0.6
+        snowflakes.width = DISPLAY_HEIGHT > DISPLAY_WIDTH and DISPLAY_HEIGHT or DISPLAY_WIDTH
+        snowflakes.height = DISPLAY_HEIGHT > DISPLAY_WIDTH and DISPLAY_HEIGHT or DISPLAY_WIDTH
+    M.group:insert(snowflakes)
+
+    local hat = display.newImage('Sprites/hat.png', title.x - title.width / 2 + 20, title.y - title.height + 30)
+        hat.alpha = 0.9
+        hat.height = hat.height / 5
+        hat.width = hat.width / 5
+    M.group:insert(hat)
+
+    snowflakes:toBack()
+    bg:toBack()
 end
 
 return M

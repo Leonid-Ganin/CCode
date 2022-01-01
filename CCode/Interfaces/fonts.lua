@@ -2,13 +2,15 @@ local BLOCK = require 'Core.Modules.interface-block'
 local M = {}
 
 local genBlocks = function()
-    for i = 1, #LOCAL.apps do
-        M.new(GET_GAME_CODE(LOCAL.apps[i]).title, LOCAL.apps[i])
+    local data = GET_GAME_CODE(CURRENT_LINK)
+
+    for i = 1, #data.resources.fonts do
+        M.new(data.resources.fonts[i][1], #M.group.blocks + 1, data.resources.fonts[i][2])
     end
 end
 
-M.new = function(title, link)
-    BLOCK.new(title, M.scroll, M.group, 'programs', #M.group.blocks + 1, nil, link)
+M.new = function(title, index, link)
+    BLOCK.new(title, M.scroll, M.group, 'fonts', index, nil, link)
 end
 
 M.create = function()
@@ -22,7 +24,7 @@ M.create = function()
         bg.height = DISPLAY_HEIGHT
     M.group:insert(bg)
 
-    local title = display.newText(STR['programs.title'], ZERO_X + 40, ZERO_Y + 30, 'ubuntu', 50)
+    local title = display.newText(STR['program.fonts'], ZERO_X + 40, ZERO_Y + 30, 'ubuntu', 50)
         title.anchorX = 0
         title.anchorY = 0
     M.group:insert(title)
@@ -35,26 +37,26 @@ M.create = function()
     local but_add = display.newImage('Sprites/add.png', ZERO_X + 190, MAX_Y - 95)
         but_add.alpha = 0.9
         but_add.button = 'but_add'
-        but_add:addEventListener('touch', require 'Core.Interfaces.programs')
+        but_add:addEventListener('touch', require 'Core.Interfaces.fonts')
     M.group:insert(but_add)
 
-    local but_import = display.newImage('Sprites/import.png', MAX_X - 190, MAX_Y - 95)
-        but_import.alpha = 0.9
-        but_import.button = 'but_import'
-        but_import:addEventListener('touch', require 'Core.Interfaces.programs')
-    M.group:insert(but_import)
+    local but_play = display.newImage('Sprites/play.png', MAX_X - 190, MAX_Y - 95)
+        but_play.alpha = 0.9
+        but_play.button = 'but_play'
+        but_play:addEventListener('touch', require 'Core.Interfaces.fonts')
+    M.group:insert(but_play)
 
     local but_list = display.newImage('Sprites/listopenbut.png', MAX_X - 80, ZERO_Y + 62)
         but_list.width, but_list.height = 103, 84
         but_list.button = 'but_list'
-        but_list:addEventListener('touch', require 'Core.Interfaces.programs')
+        but_list:addEventListener('touch', require 'Core.Interfaces.fonts')
     M.group:insert(but_list)
 
     local but_okay = display.newImage('Sprites/okay.png', MAX_X - 190, MAX_Y - 95)
         but_okay.alpha = 0.9
         but_okay.isVisible = false
         but_okay.button = 'but_okay'
-        but_okay:addEventListener('touch', require 'Core.Interfaces.programs')
+        but_okay:addEventListener('touch', require 'Core.Interfaces.fonts')
     M.group:insert(but_okay)
 
     M.scroll = WIDGET.newScrollView({

@@ -2,15 +2,34 @@ local listeners = {}
 
 listeners.but_myprogram = function(target)
     MENU.group.isVisible = false
-    PROGRAMS = PROGRAMS or require 'Interfaces.programs'
-    if not PROGRAMS.group then PROGRAMS.create() end
+    PROGRAMS = require 'Interfaces.programs'
+    PROGRAMS.create()
     PROGRAMS.group.isVisible = true
 end
 
 listeners.but_continue = function(target)
+    if LOCAL.last == '' then
+        MENU.group.isVisible = false
+        PROGRAMS = require 'Interfaces.programs'
+        PROGRAMS.create()
+        PROGRAMS.group.isVisible = true
+    else
+        MENU.group.isVisible = false
+        PROGRAMS = require 'Interfaces.programs'
+        PROGRAMS.create()
+
+        PROGRAMS.group.isVisible = false
+        PROGRAM = require 'Interfaces.program'
+        PROGRAM.create(LOCAL.last)
+        PROGRAM.group.isVisible = true
+    end
 end
 
 listeners.but_settings = function(target)
+    MENU.group.isVisible = false
+    SETTINGS = require 'Interfaces.settings'
+    SETTINGS.create()
+    SETTINGS.group.isVisible = true
 end
 
 listeners.but_social = function(target)
@@ -18,7 +37,7 @@ listeners.but_social = function(target)
 end
 
 return function(e)
-    if MENU.group.isVisible then
+    if MENU.group.isVisible and ALERT then
         if e.phase == 'began' then
             display.getCurrentStage():setFocus(e.target)
             e.target.click = true
