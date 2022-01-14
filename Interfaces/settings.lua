@@ -25,7 +25,7 @@ M.create = function()
         if e.phase == 'ended' then
             display.getCurrentStage():setFocus(nil)
 
-            LOCAL.lang = LOCAL.lang == 'en' and 'ru' or 'en'
+            LOCAL.lang = LOCAL.lang == 'en' and 'ru' or LOCAL.lang == 'ru' and 'pt' or 'en'
             lang_text.text = LOCAL.lang
             STR = LANG[LOCAL.lang]
 

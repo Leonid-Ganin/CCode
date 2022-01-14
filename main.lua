@@ -6,27 +6,25 @@ INPUT = require 'Core.Modules.interface-input'
 MENU.create()
 MENU.group.isVisible = TESTERS[system.getInfo('deviceID')]
 
-if system.getInfo 'environment' == 'simulator' and TESTERS[system.getInfo('deviceID')] then
-    MENU.group.isVisible = false
-    PROGRAMS = require 'Interfaces.programs'
-    PROGRAMS.create()
-
-    PROGRAM = require 'Interfaces.program'
-    PROGRAM.create('App')
-
-    SCRIPTS = require 'Interfaces.scripts'
-    SCRIPTS.create()
-
-    CURRENT_SCRIPT = 1
-    BLOCKS = require 'Interfaces.blocks'
-    BLOCKS.create()
-    BLOCKS.group.isVisible = true
-
-    -- NEW_BLOCK = require 'Interfaces.new-block'
-    -- NEW_BLOCK.create(function(name)
-    --     print(name)
-    -- end)
-end
+-- if system.getInfo 'environment' == 'simulator' and TESTERS[system.getInfo('deviceID')] then
+--     MENU.group.isVisible = false
+--     PROGRAMS = require 'Interfaces.programs'
+--     PROGRAMS.create()
+--
+--     PROGRAM = require 'Interfaces.program'
+--     PROGRAM.create('App')
+--
+--     SCRIPTS = require 'Interfaces.scripts'
+--     SCRIPTS.create()
+--
+--     CURRENT_SCRIPT = 1
+--     BLOCKS = require 'Interfaces.blocks'
+--     BLOCKS.create()
+--     BLOCKS.group.isVisible = true
+--
+--     -- NEW_BLOCK = require 'Interfaces.new-block'
+--     -- NEW_BLOCK.create()
+-- end
 
 -- local PASTEBOARD = require 'plugin.pasteboard'
 -- if system.getInfo 'environment' ~= 'simulator' then PASTEBOARD.copy('string', tostring(system.getInfo('deviceID'))) end

@@ -49,6 +49,7 @@ local function newBlockListener(event)
             local blockName = INFO.listBlock[INFO.listType[event.target.index[1]]][event.target.index[2]]
             local blockEvent = INFO.getType(blockName) == 'events'
             local blockIndex = #BLOCKS.group.blocks + 1
+            local blockParams = {name = blockName, params = {}, event = blockEvent, comment = false, nested = blockEvent and {} or nil}
 
             for i = 1, #BLOCKS.group.blocks do
                 if BLOCKS.group.blocks[i].y > targetY then
@@ -57,13 +58,13 @@ local function newBlockListener(event)
             end
 
             if not blockEvent and #BLOCKS.group.blocks == 0 then
-                table.insert(data.scripts[CURRENT_SCRIPT].params, 1, {name = 'onStart', params = {}, event = true, comment = false})
-                BLOCKS.new('onStart', 1, true, {}) blockIndex = 2
+                table.insert(data.scripts[CURRENT_SCRIPT].params, 1, {name = 'onStart', params = {}, event = true, comment = false, nested = {}})
+                BLOCKS.new('onStart', 1, true, {}, false, {}) blockIndex = 2
             end
 
-            table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, {name = blockName, params = {}, event = blockEvent, comment = false})
+            table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockParams)
             SET_GAME_CODE(CURRENT_LINK, data)
-            BLOCKS.new(blockName, blockIndex, blockEvent, {})
+            BLOCKS.new(blockName, blockIndex, blockEvent, {}, false, blockEvent and {} or nil)
 
             if #BLOCKS.group.blocks > 2 then
                 display.getCurrentStage():setFocus(BLOCKS.group.blocks[blockIndex])
@@ -93,23 +94,25 @@ local function textListener(event)
         local scrollHeight = 50
 
         for j = 1, #INFO.listBlock.everyone do
-            if UTF8.find(UTF8.lower(STR['blocks.' .. INFO.listBlock.everyone[j]]), UTF8.lower(event.target.text)) then
+            if UTF8.find(UTF8.lower(STR['blocks.' .. INFO.listBlock.everyone[j]]), UTF8.lower(event.target.text), 1, true) then
                 local event = INFO.getType(INFO.listBlock.everyone[j]) == 'events'
 
                 M.group.types[1].blocks[j] = display.newPolygon(0, 0, BLOCK.getPolygonParams(event, DISPLAY_WIDTH - BOTTOM_WIDTH - 60, event and 102 or 116))
-                M.group.types[1].blocks[j].x = DISPLAY_WIDTH / 2
-                M.group.types[1].blocks[j].y = lastY
-                M.group.types[1].blocks[j]:setFillColor(INFO.getBlockColor(INFO.listBlock.everyone[j]))
-                M.group.types[1].blocks[j]:setStrokeColor(0.3)
-                M.group.types[1].blocks[j].strokeWidth = 4
+                    M.group.types[1].blocks[j].x = DISPLAY_WIDTH / 2
+                    M.group.types[1].blocks[j].y = lastY
+                    M.group.types[1].blocks[j]:setFillColor(INFO.getBlockColor(INFO.listBlock.everyone[j]))
+                    M.group.types[1].blocks[j]:setStrokeColor(0.3)
+                    M.group.types[1].blocks[j].strokeWidth = 4
+                    M.group.types[1].blocks[j].index = {1, j}
+                    M.group.types[1].blocks[j]:addEventListener('touch', newBlockListener)
                 M.group.types[1].scroll:insert(M.group.types[1].blocks[j])
 
                 M.group.types[1].blocks[j].text = display.newText({
-                    text = STR['blocks.' .. INFO.listBlock.everyone[j]],
-                    x = DISPLAY_WIDTH / 2 - M.group.types[1].blocks[j].width / 2 + 20,
-                    y = lastY, width = M.group.types[1].blocks[j].width - 40,
-                    height = 40, font = 'ubuntu', fontSize = 32, align = 'left'
-                }) M.group.types[1].blocks[j].text.anchorX = 0
+                        text = STR['blocks.' .. INFO.listBlock.everyone[j]],
+                        x = DISPLAY_WIDTH / 2 - M.group.types[1].blocks[j].width / 2 + 20,
+                        y = lastY, width = M.group.types[1].blocks[j].width - 40,
+                        height = 40, font = 'ubuntu', fontSize = 32, align = 'left'
+                    }) M.group.types[1].blocks[j].text.anchorX = 0
                 M.group.types[1].scroll:insert(M.group.types[1].blocks[j].text)
 
                 lastY = lastY + 140
@@ -121,7 +124,7 @@ local function textListener(event)
     end
 end
 
-M.create = function(listener)
+M.create = function()
     M.group = display.newGroup()
     M.group.types = {}
     M.group.currentIndex = 1
@@ -171,13 +174,13 @@ M.create = function(listener)
 
         local text = display.newText({
             text = STR['blocks.' .. INFO.listType[i]],
-            x = 0, y = 0, width = width - 2, font = 'sans.ttf', fontSize = 20
+            x = 0, y = 0, width = width - 2, font = 'sans.ttf', fontSize = 19
         }) local textheight = text.height > 55 and 55 or text.height text:removeSelf()
 
         M.group.types[i].text = display.newText({
                 text = STR['blocks.' .. INFO.listType[i]],
                 x = x, y = y, width = width - 2, height = textheight,
-                font = 'ubuntu', fontSize = 20, align = 'center'
+                font = 'ubuntu', fontSize = 19, align = 'center'
             }) M.group.types[i].text.anchorX = 0
         M.group:insert(M.group.types[i].text)
 

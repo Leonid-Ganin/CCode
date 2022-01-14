@@ -11,8 +11,9 @@ WIDGET = require 'widget'
 LOCAL = require 'Data.local'
 LANG.ru = require 'Strings.ru'
 LANG.en = require 'Strings.en'
+LANG.pt = require 'Strings.pt'
 
-BUILD = 1106
+BUILD = 1107
 ALERT = true
 CENTER_Z = 0
 INDEX_LIST = 0
@@ -55,8 +56,6 @@ GET_GAME_CODE = function(link)
 end
 
 SET_GAME_CODE = function(link, data)
-    print(3)
-
     local path = DOC_DIR .. '/' .. link .. '/game.json'
     local file = io.open(path, 'w')
 
@@ -102,10 +101,10 @@ TESTERS = {
     ['67c468a7401fde8e'] = 'Gamma',
     ['3bbb32ff486ba254'] = 'Humble',
     ['fdf2239e60232fd8'] = 'Utemmmng',
-    ['d86eca757dffbb9e'] = 'Xoxn',
+    ['2e18faf0fbb74c53'] = 'Xoxn',
+    ['dd1681c951bb96bd'] = 'HandsUp',
     ['b6a6dbbf2a9c5d1b'] = 'NіkLoath',
     ['706fd7d27addc62e'] = 'Semka',
-    ['df2b2a51b08d738d'] = 'Irked',
     ['f358952a7d6716f0'] = 'Lavok',
     ['908e1f611a8c2b0a'] = 'MHP_Fan',
     ['3899216020f2cf4c'] = 'Danіl Nik',

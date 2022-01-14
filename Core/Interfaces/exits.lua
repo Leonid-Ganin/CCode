@@ -60,6 +60,11 @@ listeners.new_block = function()
     BLOCKS.group.isVisible = true
 end
 
+listeners.start = function()
+    START.remove()
+    BLOCKS.group.isVisible = true
+end
+
 Runtime:addEventListener('key', function(event)
     if (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' and ALERT then
         if PROGRAMS and PROGRAMS.group and PROGRAMS.group.isVisible then
@@ -82,6 +87,8 @@ Runtime:addEventListener('key', function(event)
             listeners.blocks()
         elseif NEW_BLOCK and NEW_BLOCK.group and NEW_BLOCK.group.isVisible then
             listeners.new_block()
+        elseif START and START.group and START.group.isVisible then
+            listeners.start()
         end
     end
 

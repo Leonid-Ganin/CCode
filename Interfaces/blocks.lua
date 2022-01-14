@@ -4,19 +4,19 @@ local M = {}
 local genBlocks = function(data)
     for i = 1, #data.scripts[CURRENT_SCRIPT].params do
         local params = data.scripts[CURRENT_SCRIPT].params[i]
-        M.new(params.name, i, params.event, params.params, params.comment)
+        M.new(params.name, i, params.event, params.params, params.comment, params.nested)
     end
 end
 
-M.new = function(name, index, event, params, comment)
-    BLOCK.new(name, M.scroll, M.group, index, event, params, comment)
+M.new = function(name, index, event, params, comment, nested)
+    BLOCK.new(name, M.scroll, M.group, index, event, params, comment, nested)
 end
 
 M.create = function()
     M.group = display.newGroup()
     M.group.isVisible = false
     M.group.blocks = {}
-    M.group.scrollHeight = 50
+    M.group.scrollHeight = 10
 
     local bg = display.newImage('Sprites/bg.png', CENTER_X, CENTER_Y)
         bg.width = DISPLAY_WIDTH

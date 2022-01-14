@@ -4,7 +4,7 @@ M.listType = {
     'everyone',
     'events',
     'vars',
-    'none',
+    'control',
     'none',
     'none',
     'none',
@@ -31,6 +31,10 @@ M.listBlock = {
     ['vars'] = {
         'setVar',
         'newText',
+    },
+
+    ['control'] = {
+        'requestApi',
     }
 }
 
@@ -41,6 +45,9 @@ M.listName = {
     -- vars
     ['setVar'] = {'vars', 'var', 'value'},
     ['newText'] = {'vars', 'value', 'value', 'value', 'value', 'value', 'value'},
+
+    -- control
+    ['requestApi'] = {'control', 'text'},
 }
 
 M.listNested = {}
@@ -62,6 +69,8 @@ M.getBlockColor = function(name, comment, type)
         return 0.1, 0.6, 0.65
     elseif type == 'vars' then
         return 0.75, 0.6, 0.3
+    elseif type == 'control' then
+        return 0.6, 0.55, 0.4
     elseif type == 'everyone' then
         return 0.15, 0.55, 0.4
     end

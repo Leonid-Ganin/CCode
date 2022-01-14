@@ -1,4 +1,7 @@
-local function onCheckboxPress(e)
+local LIST = require 'Core.Modules.logic-list'
+local M = {}
+
+function onCheckboxPress(e)
     local last_checkbox = e.target.getIndex(e.target)
 
     if LAST_CHECKBOX ~= 0 and BLOCKS.group.blocks[LAST_CHECKBOX].data.event and last_checkbox ~= LAST_CHECKBOX then
@@ -28,8 +31,6 @@ local function onCheckboxPress(e)
         end
     end
 end
-
-local M = {}
 
 function newMoveLogicBlock(e, group, scroll, isNewBlock)
     if #group.blocks > 1 then
@@ -205,6 +206,8 @@ return function(e)
                         e.target.move = false
                         stopMoveLogicBlock(e, BLOCKS.group, BLOCKS.group[8])
                     end
+                else
+                    LIST.new(e.target)
                 end
 
                 if e.target.timer then
