@@ -23,6 +23,7 @@ return {
     ["program.fonts"] = "Fonts",
     ["program.export"] = "Export",
     ["program.build"] = "Build",
+    ["program.editor"] = "Expression editor",
     ["scripts.entername"] = "Enter script name",
     ["scripts.changename"] = "Change script name",
     ["images.entername"] = "Enter sprite name",

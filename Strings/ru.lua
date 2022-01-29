@@ -23,6 +23,7 @@ return {
     ["program.fonts"] = "Шрифты",
     ["program.export"] = "Экспорт",
     ["program.build"] = "Сбилдить",
+    ["program.editor"] = "Редактор выражений",
     ["scripts.entername"] = "Введите имя скрипта",
     ["scripts.changename"] = "Измените имя скрипта",
     ["images.entername"] = "Введите имя спрайта",
@@ -48,4 +49,15 @@ return {
     ["blocks.control"] = "Управление",
     ["blocks.requestApi"] = "Вызвать API метод",
     ["blocks.requestApi.params"] = {"Lua код:"},
+
+    ["editor.button.text"] = "Текст",
+    ["editor.button.local"] = "Локал",
+    ["editor.button.hide"] = "Скрыть",
+    ["editor.list.var"] = "Переменные",
+    ["editor.list.table"] = "Таблицы",
+    ["editor.list.fun"] = "Функции",
+    ["editor.list.math"] = "Математика",
+    ["editor.list.prop"] = "Свойства",
+    ["editor.list.log"] = "Логика",
+    ["editor.list.device"] = "Устройство",
 }

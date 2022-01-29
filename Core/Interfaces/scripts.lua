@@ -21,14 +21,14 @@ listeners.but_add = function(target)
 
                 for i = 1, #SCRIPTS.group.data do
                     if SCRIPTS.group.data[i].y > targetY then
-                        table.insert(data.scripts, i, {title = e.text, params = {}})
+                        table.insert(data.scripts, i, {title = e.text, params = {}, vars = {}, tables = {}})
                         SET_GAME_CODE(CURRENT_LINK, data)
                         SCRIPTS.new(e.text, i)
                         return
                     end
                 end
 
-                table.insert(data.scripts, #data.scripts + 1, {title = e.text, params = {}})
+                table.insert(data.scripts, #data.scripts + 1, {title = e.text, params = {}, vars = {}, tables = {}})
                 SET_GAME_CODE(CURRENT_LINK, data)
                 SCRIPTS.new(e.text, #SCRIPTS.group.blocks + 1)
             end
@@ -160,14 +160,22 @@ listeners.but_okay = function(target)
 
                         for j = 1, #SCRIPTS.group.data do
                             if SCRIPTS.group.data[j].y > targetY then
-                                table.insert(data.scripts, j, {title = e.text, params = data.scripts[i].params})
+                                table.insert(data.scripts, j, {
+                                    title = e.text, params = data.scripts[i].params,
+                                    vars = data.scripts[i].vars, tables = data.scripts[i].tables
+                                })
+
                                 SET_GAME_CODE(CURRENT_LINK, data)
                                 SCRIPTS.new(e.text, j)
                                 return
                             end
                         end
 
-                        table.insert(data.scripts, #data.scripts + 1, {title = e.text, params = data.scripts[i].params})
+                        table.insert(data.scripts, #data.scripts + 1, {
+                            title = e.text, params = data.scripts[i].params,
+                            vars = data.scripts[i].vars, tables = data.scripts[i].tables
+                        })
+
                         SET_GAME_CODE(CURRENT_LINK, data)
                         SCRIPTS.new(e.text, #SCRIPTS.group.blocks + 1)
                     end

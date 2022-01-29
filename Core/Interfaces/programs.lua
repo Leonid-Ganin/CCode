@@ -177,20 +177,7 @@ listeners.but_okay = function(target)
 
                                 LOCAL.apps[#LOCAL.apps + 1] = 'App' .. numApp
                                 LFS.mkdir(DOC_DIR .. '/App' .. numApp)
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Documents')
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Temps')
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Images')
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Sounds')
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Videos')
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp .. '/Fonts')
-
                                 OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link, DOC_DIR .. '/App' .. numApp)
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Documents', DOC_DIR .. '/App' .. numApp .. '/Documents')
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Temps', DOC_DIR .. '/App' .. numApp .. '/Temps')
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Images', DOC_DIR .. '/App' .. numApp .. '/Images')
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Sounds', DOC_DIR .. '/App' .. numApp .. '/Sounds')
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Videos', DOC_DIR .. '/App' .. numApp .. '/Videos')
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link .. '/Fonts', DOC_DIR .. '/App' .. numApp .. '/Fonts')
 
                                 NEW_DATA()
                                 SET_GAME_CODE('App' .. numApp, data)

@@ -1,19 +1,22 @@
-local function appResize(type)
-    ORIENTATION.lock(type)
+local function appResize()
+    ORIENTATION.lock('all')
     CENTER_X = display.contentCenterX
     CENTER_Y = display.contentCenterY
     DISPLAY_WIDTH = display.actualContentWidth
     DISPLAY_HEIGHT = display.actualContentHeight
     TOP_HEIGHT = system.getInfo 'environment' ~= 'simulator' and display.topStatusBarContentHeight or 0
+    TOP_WIDTH = system.getInfo 'environment' ~= 'simulator' and display.topStatusBarContentHeight or 0
     BOTTOM_HEIGHT = DISPLAY_HEIGHT - display.safeActualContentHeight
     BOTTOM_WIDTH = DISPLAY_WIDTH - display.safeActualContentWidth
 
     if CENTER_X == 640 then
-        ZERO_X = CENTER_X - DISPLAY_WIDTH / 2 + TOP_HEIGHT
+        TOP_HEIGHT = 0
+        ZERO_X = CENTER_X - DISPLAY_WIDTH / 2 + TOP_WIDTH
         ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2
         MAX_X = CENTER_X + DISPLAY_WIDTH / 2 - BOTTOM_WIDTH
         MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2
     elseif CENTER_X == 360 then
+        TOP_WIDTH = 0
         ZERO_X = CENTER_X - DISPLAY_WIDTH / 2
         ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2 + TOP_HEIGHT
         MAX_X = CENTER_X + DISPLAY_WIDTH / 2
@@ -23,7 +26,7 @@ end
 
 Runtime:addEventListener('orientation', function(event)
     if ALERT then
-        local vis = appResize(event.type)
+        local vis = appResize()
 
         if MENU and MENU.group then
             vis = MENU.group.isVisible
@@ -103,6 +106,15 @@ Runtime:addEventListener('orientation', function(event)
             BLOCKS.group = nil
             BLOCKS.create()
             BLOCKS.group.isVisible = vis
+        end
+
+        if EDITOR and EDITOR.group then
+            vis = EDITOR.group.isVisible
+            restart = COPY_TABLE(EDITOR.restart)
+            EDITOR.group:removeSelf()
+            EDITOR.group = nil
+            EDITOR.create(unpack(restart))
+            EDITOR.group.isVisible = vis
         end
     end
 end)

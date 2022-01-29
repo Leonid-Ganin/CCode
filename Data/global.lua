@@ -1,5 +1,7 @@
 LANG, STR = {}, {}
 
+RESIZE = require 'Core.Modules.app-resize'
+INPUT = require 'Core.Modules.interface-input'
 EXITS = require 'Core.Interfaces.exits'
 FILE = require 'plugin.cnkFileManager'
 ORIENTATION = require 'plugin.orientation'
@@ -13,9 +15,10 @@ LANG.ru = require 'Strings.ru'
 LANG.en = require 'Strings.en'
 LANG.pt = require 'Strings.pt'
 
-BUILD = 1107
+BUILD = 1108
 ALERT = true
 CENTER_Z = 0
+TOP_WIDTH = 0
 INDEX_LIST = 0
 MORE_LIST = true
 LAST_CHECKBOX = 0
@@ -36,6 +39,20 @@ ZERO_X = CENTER_X - DISPLAY_WIDTH / 2
 ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2 + TOP_HEIGHT
 MAX_X = CENTER_X + DISPLAY_WIDTH / 2
 MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2 - BOTTOM_HEIGHT
+
+COPY_TABLE = function(t)
+    local result = {}
+
+    for key, value in pairs(t) do
+        if type(value) == 'table' then
+            result[key] = COPY_TABLE(value)
+        else
+            result[key] = value
+        end
+    end
+
+    return result
+end
 
 NEW_DATA = function()
     local file = io.open(system.pathForFile('local.json', system.DocumentsDirectory), 'w')
@@ -92,14 +109,14 @@ OS_MOVE = function(link, link2)
 end
 
 OS_COPY = function(link, link2)
-    os.execute('cp -rf "' .. link .. '" "' .. link2 .. '"')
+    os.execute('cp -R "' .. link .. '" "' .. link2 .. '"')
 end
 
 TESTERS = {
     ['dbfaf215e5f04d19'] = 'Ganin',
     ['ebc550a43577b965'] = 'Ganin',
     ['67c468a7401fde8e'] = 'Gamma',
-    ['3bbb32ff486ba254'] = 'Humble',
+    ['24d13c2e23fb57e5'] = 'Humble',
     ['fdf2239e60232fd8'] = 'Utemmmng',
     ['2e18faf0fbb74c53'] = 'Xoxn',
     ['dd1681c951bb96bd'] = 'HandsUp',
@@ -116,6 +133,8 @@ NEW_APP_CODE = function(title, link)
         build = tostring(BUILD),
         title = title,
         link = link,
+        tables = {},
+        vars = {},
         settings = {
             build = 1,
             version = '1.0',
@@ -138,3 +157,23 @@ display.setDefault('background', 0.15, 0.15, 0.17)
 display.setStatusBar(display.HiddenStatusBar)
 math.round = function(num) return tonumber(string.match(tostring(num), '(.*)%.')) end
 if system.getInfo 'environment' == 'simulator' then JSON.encode = JSON.prettify end
+
+GET_GLOBAL_TABLE = function()
+    return {
+        sendLaunchAnalytics = _G.sendLaunchAnalytics, transition = _G.transition, tostring = _G.tostring,
+        tonumber = _G.tonumber, gcinfo = _G.gcinfo, assert = _G.assert, debug = _G.debug,
+        io = _G.io, os = _G.os, display = _G.display, load = _G.load, module = _G.module, media = _G.media,
+        native = _G.native, coroutine = _G.coroutine, CENTER_X = _G.CENTER_X, CENTER_Y = _G.CENTER_Y, CENTER_Z = _G.CENTER_Z,
+        TOP_HEIGHT = _G.TOP_HEIGHT, network = _G.network, lfs = _G.lfs, _network_pathForFile = _G._network_pathForFile,
+        pcall = _G.pcall, BUILD = _G.BUILD, MAX_Y = _G.MAX_Y, MAX_X = _G.MAX_X, string = _G.string,
+        xpcall = _G.xpcall, ZERO_Y = _G.ZERO_Y, ZERO_X = _G.ZERO_X, package = _G.package, print = _G.print,
+        table = _G.table, lpeg = _G.lpeg, COPY_TABLE = _G.COPY_TABLE, DISPLAY_HEIGHT = _G.DISPLAY_HEIGHT,
+        unpack = _G.unpack, require = _G.require, setmetatable = _G.setmetatable, next = _G.next,
+        graphics = _G.graphics, ipairs = _G.ipairs, system = _G.system, rawequal = _G.rawequal,
+        timer = _G.timer, BOTTOM_HEIGHT = _G.BOTTOM_HEIGHT, newproxy = _G.newproxy, metatable = _G.metatable,
+        al = _G.al, rawset = _G.rawset, easing = _G.easing, coronabaselib = _G.coronabaselib, math = _G.math,
+        BOTTOM_WIDTH = _G.BOTTOM_WIDTH, cloneArray = _G.cloneArray, DISPLAY_WIDTH = _G.DISPLAY_WIDTH, type = _G.type,
+        audio = _G.audio, pairs = _G.pairs, select = _G.select, rawget = _G.rawget, Runtime = _G.Runtime,
+        collectgarbage = _G.collectgarbage, getmetatable = _G.getmetatable, error = _G.error,
+    }
+end

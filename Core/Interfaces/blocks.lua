@@ -93,7 +93,7 @@ listeners.but_okay = function(target)
                 local diffY = BLOCKS.group[8].y - BLOCKS.group[8].height / 2
                 local targetY = math.abs(scrollY) + diffY + CENTER_Y - 150
                 local blockIndex = i
-                local blockData = BLOCKS.group.blocks[i].data
+                local blockData = COPY_TABLE(BLOCKS.group.blocks[i].data)
 
                 if blockData.event then
                     table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
@@ -101,7 +101,7 @@ listeners.but_okay = function(target)
 
                     for j = blockIndex + 2, #BLOCKS.group.blocks do
                         if BLOCKS.group.blocks[j + blockIndex - i].data.event then break end
-                        blockIndex, blockData = blockIndex + 1, BLOCKS.group.blocks[j + blockIndex - i].data
+                        blockIndex, blockData = blockIndex + 1, COPY_TABLE(BLOCKS.group.blocks[j + blockIndex - i].data)
                         table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
                         BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested)
                     end
@@ -163,7 +163,7 @@ listeners.but_okay = function(target)
 
                 if #BLOCKS.group.blocks[i].data.nested > 0 then
                     for j = 1, #BLOCKS.group.blocks[i].data.nested do
-                        local blockIndex, blockData = i + j, BLOCKS.group.blocks[i].data.nested[j]
+                        local blockIndex, blockData = i + j, COPY_TABLE(BLOCKS.group.blocks[i].data.nested[j])
                         table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
                         BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment)
                     end

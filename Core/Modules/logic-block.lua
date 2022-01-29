@@ -90,7 +90,7 @@ M.getPolygonParams = function(event, blockWidth, blockHeight)
 end
 
 M.new = function(name, scroll, group, index, event, params, comment, nested)
-    local blockHeight, blockWidth, blockParams, lengthParams = 116, DISPLAY_WIDTH - BOTTOM_WIDTH - 60, {}, #INFO.listName[name] - 1
+    local blockHeight, blockWidth, blockParams, lengthParams = 116, DISPLAY_WIDTH - BOTTOM_WIDTH - TOP_WIDTH - 60, {}, #INFO.listName[name] - 1
     if not event then blockHeight = lengthParams < 3 and 116 or (lengthParams < 5 and 176 or (lengthParams < 7 and 236 or 296)) end
     blockParams = M.getPolygonParams(event, blockWidth, event and 102 or blockHeight)
 

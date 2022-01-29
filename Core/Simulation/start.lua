@@ -63,7 +63,7 @@ M.new = function()
         end
     end
 
-    pcall(function() loadstring('local G = {} for key, value in pairs(_G) do G[key] = value end setfenv(1, G) ' .. M.lua)() end)
+    pcall(function() loadstring(M.lua)() end)
 end
 
 return M

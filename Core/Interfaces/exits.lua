@@ -60,6 +60,12 @@ listeners.new_block = function()
     BLOCKS.group.isVisible = true
 end
 
+listeners.editor = function()
+    EDITOR.group:removeSelf()
+    EDITOR.group = nil
+    BLOCKS.group.isVisible = true
+end
+
 listeners.start = function()
     START.remove()
     BLOCKS.group.isVisible = true
@@ -87,6 +93,8 @@ Runtime:addEventListener('key', function(event)
             listeners.blocks()
         elseif NEW_BLOCK and NEW_BLOCK.group and NEW_BLOCK.group.isVisible then
             listeners.new_block()
+        elseif EDITOR and EDITOR.group and EDITOR.group.isVisible then
+            listeners.editor()
         elseif START and START.group and START.group.isVisible then
             listeners.start()
         end

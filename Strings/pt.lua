@@ -23,6 +23,7 @@ return {
     ["program.fonts"] = "Fontes",
     ["program.export"] = "Exportar",
     ["program.build"] = "Construir",
+    ["program.editor"] = "Editor expressão",
     ["scripts.entername"] = "Digite nome roteiro",
     ["scripts.changename"] = "Alterar nome roteiro",
     ["images.entername"] = "Digite nome sprite",

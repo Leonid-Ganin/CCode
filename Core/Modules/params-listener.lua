@@ -9,7 +9,7 @@ M.open = function(target, listener)
     local blockIndex = target.parent.parent.getIndex(target.parent.parent)
     local paramsData = data.scripts[CURRENT_SCRIPT].params[blockIndex].params[paramsIndex]
 
-    if INFO.listName[blockName][2] == 'text' then
+    if INFO.listName[blockName][paramsIndex + 1] == 'text' then
         BLOCKS.group[8]:setIsLocked(true, 'vertical')
         INPUT.new(STR['blocks.entertext'], function(event)
             if (event.phase == 'ended' or event.phase == 'submitted') and not ALERT then
@@ -30,6 +30,9 @@ M.open = function(target, listener)
                 SET_GAME_CODE(CURRENT_LINK, data)
             end
         end, paramsData and paramsData[1][1] or '') native.setKeyboardFocus(INPUT.box)
+    elseif INFO.listName[blockName][paramsIndex + 1] == 'value' and ALERT then
+        EDITOR = require 'Core.Editor.interface'
+        EDITOR.create(blockName, blockIndex, paramsData, paramsIndex)
     end
 end
 
