@@ -49,4 +49,15 @@ return {
     ["blocks.control"] = "Control",
     ["blocks.requestApi"] = "Request API method",
     ["blocks.requestApi.params"] = {"Lua code:"},
+
+    ["editor.button.text"] = "Text",
+    ["editor.button.local"] = "Local",
+    ["editor.button.hide"] = "Hide",
+    ["editor.list.var"] = "Variables",
+    ["editor.list.table"] = "Tables",
+    ["editor.list.fun"] = "Functions",
+    ["editor.list.math"] = "Mathematics",
+    ["editor.list.prop"] = "Properties",
+    ["editor.list.log"] = "Logic",
+    ["editor.list.device"] = "Device",
 }

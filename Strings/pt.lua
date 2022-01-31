@@ -49,4 +49,15 @@ return {
     ["blocks.control"] = "Controle",
     ["blocks.requestApi"] = "Solicitar método API",
     ["blocks.requestApi.params"] = {"Lua código:"},
+
+    ["editor.button.text"] = "Texto",
+    ["editor.button.local"] = "Local",
+    ["editor.button.hide"] = "Tapar",
+    ["editor.list.var"] = "Variáveis",
+    ["editor.list.table"] = "Tabelas",
+    ["editor.list.fun"] = "Funções",
+    ["editor.list.math"] = "Matemática",
+    ["editor.list.prop"] = "Propriedades",
+    ["editor.list.log"] = "Lógica",
+    ["editor.list.device"] = "Dispositivo",
 }

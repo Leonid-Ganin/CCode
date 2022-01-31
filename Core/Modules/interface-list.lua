@@ -5,7 +5,7 @@ M.new = function(buttons, x, y, direction, listener, first, second, anchorX)
         ALERT = false
         M.listener = listener
         M.group = display.newGroup()
-        
+
         if first then
             for i = 1, #buttons do
                 if buttons[i] == first then
@@ -102,24 +102,18 @@ M.new = function(buttons, x, y, direction, listener, first, second, anchorX)
                 end return true
             end) y = y + 80
         end
+
+        EXITS.add(M.remove, 0)
     end
 end
 
 M.remove = function(index, text)
-    if M.group then
+    if M and M.group then
         ALERT = true
         M.listener({index = index, text = text})
         M.group:removeSelf()
         M.group = nil
     end
 end
-
-Runtime:addEventListener('key', function(event)
-    if (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' then
-        if not ALERT and M and M.group then
-            M.remove(0)
-        end
-    end
-end)
 
 return M

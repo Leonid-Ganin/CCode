@@ -32,11 +32,13 @@ M.new = function(title, textListener, inputListener, oldText)
 
         M.line = display.newRect(M.group, CENTER_X, CENTER_Y - 75, DISPLAY_WIDTH - 150, 2)
         M.group:insert(M.line)
+
+        EXITS.add(M.remove, false)
     end
 end
 
 M.remove = function(input, text)
-    if M.group then
+    if M and M.group then
         ALERT = true
         native.setKeyboardFocus(nil)
         M.listener({input = input, text = text})
@@ -45,13 +47,5 @@ M.remove = function(input, text)
         M.group = nil
     end
 end
-
-Runtime:addEventListener('key', function(event)
-    if (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' then
-        if not ALERT and M and M.group then
-            M.remove(false)
-        end
-    end
-end)
 
 return M

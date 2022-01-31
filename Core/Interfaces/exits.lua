@@ -71,7 +71,11 @@ listeners.start = function()
     BLOCKS.group.isVisible = true
 end
 
-Runtime:addEventListener('key', function(event)
+listeners.add = function(listener, arg)
+    listeners.listener = function() listener(arg) end
+end
+
+listeners.lis = function(event)
     if (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' and ALERT then
         if PROGRAMS and PROGRAMS.group and PROGRAMS.group.isVisible then
             listeners.programs()
@@ -98,11 +102,15 @@ Runtime:addEventListener('key', function(event)
         elseif START and START.group and START.group.isVisible then
             listeners.start()
         end
+    elseif (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' then
+        if listeners.listener then listeners.listener() listeners.listener = nil end
     end
 
     if (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' then
         return true
     end
-end)
+end
 
-return true
+Runtime:addEventListener('key', listeners.lis)
+
+return listeners

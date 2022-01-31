@@ -43,15 +43,21 @@ M.getParamsValueText = function(params, i)
     if params[i] then
         for _, value in ipairs(params[i]) do
             if value[2] == 't' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. '\'' .. UTF8.gsub(value[1], '\n', '\\n') .. '\''
+            elseif value[2] == 'n' or value[2] == 'l' or value[2] == 'u' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
+                result = result .. value[1]
             elseif value[2] == 'v' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. '"' .. value[1] .. '"'
             elseif value[2] == 'f' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. STR['editor.' .. value[1]]
-            elseif value[2] == 's' or value[2] == 'n' or value[2] == 'l' then
-                if value[1] == '+' or value[1] == '-' then result = result .. ' ' .. value[1] .. ' '
-                elseif value[1] == ',' then result = result .. value[1] .. ' '
-                else result = result .. value[1] end
+            elseif value[2] == 's' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
+                result = result .. value[1]
+                if value[1] == ',' then result = result .. ' ' end
             end
         end
     end
