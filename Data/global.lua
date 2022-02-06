@@ -15,7 +15,7 @@ LANG.ru = require 'Strings.ru'
 LANG.en = require 'Strings.en'
 LANG.pt = require 'Strings.pt'
 
-BUILD = 1108
+BUILD = 1112
 ALERT = true
 CENTER_Z = 0
 TOP_WIDTH = 0
@@ -43,11 +43,13 @@ MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2 - BOTTOM_HEIGHT
 COPY_TABLE = function(t)
     local result = {}
 
-    for key, value in pairs(t) do
-        if type(value) == 'table' then
-            result[key] = COPY_TABLE(value)
-        else
-            result[key] = value
+    if t then
+        for key, value in pairs(t) do
+            if type(value) == 'table' then
+                result[key] = COPY_TABLE(value)
+            else
+                result[key] = value
+            end
         end
     end
 
@@ -109,7 +111,7 @@ OS_MOVE = function(link, link2)
 end
 
 OS_COPY = function(link, link2)
-    os.execute('cp -R "' .. link .. '" "' .. link2 .. '"')
+    os.execute('cp -r "' .. link .. '" "' .. link2 .. '"')
 end
 
 TESTERS = {
@@ -121,7 +123,7 @@ TESTERS = {
     ['2e18faf0fbb74c53'] = 'Xoxn',
     ['dd1681c951bb96bd'] = 'HandsUp',
     ['b6a6dbbf2a9c5d1b'] = 'NіkLoath',
-    ['706fd7d27addc62e'] = 'Semka',
+    -- ['706fd7d27addc62e'] = 'Semka',
     ['f358952a7d6716f0'] = 'Lavok',
     ['908e1f611a8c2b0a'] = 'MHP_Fan',
     ['3899216020f2cf4c'] = 'Danіl Nik',

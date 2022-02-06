@@ -39,23 +39,43 @@ end
 
 M.getParamsValueText = function(params, i)
     local result = ''
+    local lastFun = false
 
     if params[i] then
         for _, value in ipairs(params[i]) do
             if value[2] == 't' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. '\'' .. UTF8.gsub(value[1], '\n', '\\n') .. '\''
-            elseif value[2] == 'n' or value[2] == 'l' or value[2] == 'u' then
+            elseif value[2] == 'n' or value[2] == 'u' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. value[1]
-            elseif value[2] == 'v' then
+            elseif value[2] == 'vP' or value[2] == 'vS' or value[2] == 'vE' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. '"' .. value[1] .. '"'
             elseif value[2] == 'f' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
-                result = result .. STR['editor.' .. value[1]]
-            elseif value[2] == 's' then
+                result = result .. STR['editor.list.fun.' .. value[1]]
+                lastFun = true
+            elseif value[2] == 'm' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
+                result = result .. STR['editor.list.math.' .. value[1]]
+                lastFun = true
+            elseif value[2] == 'p' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
+                result = result .. STR['editor.list.prop.' .. value[1]]
+                lastFun = true
+            elseif value[2] == 'l' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
+                if STR['editor.list.log.' .. value[1]]
+                then result = result .. STR['editor.list.log.' .. value[1]]
+                else result = result .. value[1] end
+                lastFun = false
+            elseif value[2] == 'd' then
+                if UTF8.len(result) > 0 then result = result .. ' ' end
+                result = result .. STR['editor.list.device.' .. value[1]]
+                lastFun = false
+            elseif value[2] == 's' then
+                if UTF8.len(result) > 0 and (not lastFun or value[1] ~= '(') then result = result .. ' ' end
                 result = result .. value[1]
                 if value[1] == ',' then result = result .. ' ' end
             end
@@ -95,7 +115,7 @@ M.getPolygonParams = function(event, blockWidth, blockHeight)
     end
 end
 
-M.new = function(name, scroll, group, index, event, params, comment, nested)
+M.new = function(name, scroll, group, index, event, params, comment, nested, vars, tables)
     local blockHeight, blockWidth, blockParams, lengthParams = 116, DISPLAY_WIDTH - BOTTOM_WIDTH - TOP_WIDTH - 60, {}, #INFO.listName[name] - 1
     if not event then blockHeight = lengthParams < 3 and 116 or (lengthParams < 5 and 176 or (lengthParams < 7 and 236 or 296)) end
     blockParams = M.getPolygonParams(event, blockWidth, event and 102 or blockHeight)
@@ -103,7 +123,7 @@ M.new = function(name, scroll, group, index, event, params, comment, nested)
     local y = index == 1 and 50 or group.blocks[index - 1].y + group.blocks[index - 1].block.height / 2 + blockHeight / 2 - 2
     if event then y = y + 24 end table.insert(group.blocks, index, display.newGroup())
 
-    group.blocks[index].data = {event = event, comment = comment, name = name, params = params, nested = nested}
+    group.blocks[index].data = {event = event, comment = comment, name = name, params = params, nested = nested, vars = vars, tables = tables}
     group.blocks[index].x, group.blocks[index].y = scroll.width / 2, y
 
     group.blocks[index].block = display.newPolygon(0, 0, blockParams)
@@ -123,9 +143,19 @@ M.new = function(name, scroll, group, index, event, params, comment, nested)
         })
     group.blocks[index]:insert(group.blocks[index].text)
 
+    if nested then
+        local polygonX = group.blocks[index].block.x + group.blocks[index].block.width / 2 - 25
+        local polygonY = group.blocks[index].block.y - group.blocks[index].block.height / 2 + 20
+
+        group.blocks[index].polygon = display.newPolygon(polygonX, polygonY, {0, 0, 10, 10, -10, 10})
+            group.blocks[index].polygon.yScale = #nested > 0 and 1 or -1
+            group.blocks[index].polygon:setFillColor(#nested > 0 and 0.25 or 1)
+        group.blocks[index]:insert(group.blocks[index].polygon)
+    end
+
     group.blocks[index].checkbox = WIDGET.newSwitch({
-            x = -357, y = 0, style = 'checkbox', width = 60, height = 60,
-            onPress = function(event) event.target:setState({isOn = not event.target.isOn}) end
+            x = (-scroll.width / 2 + group.blocks[index].block.x - group.blocks[index].block.width / 2) / 2 - 10, y = 0,
+            style = 'checkbox', width = 50, height = 50, onPress = function(event) event.target:setState({isOn = not event.target.isOn}) end
         }) group.blocks[index].checkbox.isVisible = false
     group.blocks[index]:insert(group.blocks[index].checkbox)
 
@@ -188,7 +218,7 @@ M.new = function(name, scroll, group, index, event, params, comment, nested)
                     e.target.click = false
                     e.target:setFillColor(1)
                     e.target.alpha = 0.005
-                    LISTENER.open(e.target, M.getParamsValueText)
+                    LISTENER.open(e.target)
                 end
             end
 

@@ -32,6 +32,9 @@ M.create = function(target, polygon, length, size, height, width, comment, param
         })
     block:insert(block.text)
 
+    block.rects = display.newGroup()
+    block:insert(block.rects)
+
     if twidth then
         for i = 1, length do
             local nameY = BLOCK.getParamsNameY(length)[i]
@@ -54,6 +57,14 @@ M.create = function(target, polygon, length, size, height, width, comment, param
                     x = BLOCK.getParamsLineX(length, width)[i] / size, y = (nameY + 5) / size, font = 'ubuntu', fontSize = 20 / size, align = 'center'
                 }) block.params[i].value.anchorX = 0
             block:insert(block.params[i].value)
+
+            block.params[i].rect = display.newRect(BLOCK.getParamsLineX(length, width)[i] / size, (nameY + 20) / size, BLOCK.getParamsLineWidth(length, width)[i] / size, 40 / size)
+                block.params[i].rect:setFillColor(1)
+                block.params[i].rect.alpha = 0.005
+                block.params[i].rect.anchorX = 0
+                block.params[i].rect.anchorY = 1
+                block.params[i].rect.index = i
+            block.rects:insert(block.params[i].rect)
         end
 
         return block
@@ -83,13 +94,13 @@ M.create = function(target, polygon, length, size, height, width, comment, param
 end
 
 M.new = function(target)
-    if not M.group then
+    if not M.group and UTF8.sub(target.data.name, UTF8.len(target.data.name) - 2, UTF8.len(target.data.name)) ~= 'End' then
         M.group, ALERT = display.newGroup(), false
         BLOCKS.group[8]:setIsLocked(true, 'vertical')
 
         local polygon = BLOCK.getPolygonParams(target.data.event, target.block.width, target.data.event and 102 or target.block.height)
-        local length, size = #INFO.listName[target.data.name] - 1, 1.6
-        local height = target.data.event and target.block.height / size + 340 or target.block.height / size + 264
+        local length, size, nested = #INFO.listName[target.data.name] - 1, 1.6, target.data.nested
+        local height = nested and target.block.height / size + 340 or target.block.height / size + 264
         local width = target.block.width / size + 20 for i = 1, #polygon do polygon[i] = polygon[i] / size end
 
         local bg = display.newRect(CENTER_X, CENTER_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT)
@@ -102,7 +113,6 @@ M.new = function(target)
 
         local index = target.getIndex(target)
         local comment = target.data.comment
-        local nested = target.data.nested
         local params = target.data.params
         local event = target.data.event
         local name = target.data.name

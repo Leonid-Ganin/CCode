@@ -35,10 +35,14 @@ listeners.but_list = function(target)
                     BLOCKS.group[7].isVisible = true
 
                     for i = 1, #BLOCKS.group.blocks do
-                        BLOCKS.group.blocks[i].x = BLOCKS.group.blocks[i].x + 20
-                        BLOCKS.group.blocks[i].checkbox:setState({isOn = false})
-                        BLOCKS.group.blocks[i].checkbox.isVisible = true
-                        BLOCKS.group.blocks[i].rects.isVisible = false
+                        local name = BLOCKS.group.blocks[i].data.name
+                            BLOCKS.group.blocks[i].x = BLOCKS.group.blocks[i].x + 20
+                            BLOCKS.group.blocks[i].checkbox:setState({isOn = false})
+                            BLOCKS.group.blocks[i].rects.isVisible = false
+
+                        if UTF8.sub(name, UTF8.len(name) - 2, UTF8.len(name)) ~= 'End' then
+                            BLOCKS.group.blocks[i].checkbox.isVisible = true
+                        end
                     end
 
                     MORE_LIST = e.text ~= STR['button.copy']
@@ -95,15 +99,36 @@ listeners.but_okay = function(target)
                 local blockIndex = i
                 local blockData = COPY_TABLE(BLOCKS.group.blocks[i].data)
 
-                if blockData.event then
-                    table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
-                    BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested)
+                if blockData.nested then
+                    local endIndex = 1
+                    local nestedEndIndex = 1
+                    local bName = blockData.name
+                    local isEvent = blockData.event
 
-                    for j = blockIndex + 2, #BLOCKS.group.blocks do
-                        if BLOCKS.group.blocks[j + blockIndex - i].data.event then break end
-                        blockIndex, blockData = blockIndex + 1, COPY_TABLE(BLOCKS.group.blocks[j + blockIndex - i].data)
-                        table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
-                        BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested)
+                    if not blockData.event then
+                        endIndex = #INFO.listNested[blockData.name]
+                    end
+
+                    table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
+                    BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested, blockData.vars, blockData.tables)
+
+                    if #blockData.nested == 0 or blockData.event then
+                        for j = blockIndex + 2, #BLOCKS.group.blocks do
+                            if isEvent and BLOCKS.group.blocks[j + blockIndex - i].data.event then break end
+                            blockIndex, blockData = blockIndex + 1, COPY_TABLE(BLOCKS.group.blocks[j + blockIndex - i].data)
+                            table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
+                            BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested, blockData.vars, blockData.tables)
+                            local notNested = not (blockData.nested and #blockData.nested > 0)
+
+                            if not isEvent then
+                                if blockData.name == bName and notNested then
+                                    nestedEndIndex = nestedEndIndex + 1
+                                elseif blockData.name == INFO.listNested[bName][endIndex] then
+                                    nestedEndIndex = nestedEndIndex - 1
+                                    if nestedEndIndex == 0 then break end
+                                end
+                            end
+                        end
                     end
 
                     SET_GAME_CODE(CURRENT_LINK, data)
@@ -146,12 +171,46 @@ listeners.but_okay = function(target)
                     BLOCKS.group.blocks[i].data.comment = true
                 end
 
-                if BLOCKS.group.blocks[i].data.event then
-                    for j = i + 1, #BLOCKS.group.blocks do
-                        if BLOCKS.group.blocks[j].data.event then break end
-                        data.scripts[CURRENT_SCRIPT].params[j].comment = BLOCKS.group.blocks[i].data.comment
-                        BLOCKS.group.blocks[j].block:setFillColor(INFO.getBlockColor(BLOCKS.group.blocks[j].data.name, BLOCKS.group.blocks[i].data.comment))
-                        BLOCKS.group.blocks[j].data.comment = BLOCKS.group.blocks[i].data.comment
+                if BLOCKS.group.blocks[i].data.nested then
+                    local nestedFun
+                    local endIndex = 1
+                    local nestedEndIndex = 1
+
+                    if not BLOCKS.group.blocks[i].data.event then
+                        endIndex = #INFO.listNested[BLOCKS.group.blocks[i].data.name]
+                    end
+
+                    nestedFun = function(t1, t2, comment)
+                        for j = 1, #t1 do
+                            t1[j].comment = comment
+                            t2[j].comment = comment
+
+                            if t2[j].nested and #t2[j].nested > 0 then
+                                nestedFun(t1[j].nested, t2[j].nested, comment)
+                            end
+                        end
+                    end
+
+                    nestedFun(data.scripts[CURRENT_SCRIPT].params[i].nested, BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[i].data.comment)
+
+                    if #BLOCKS.group.blocks[i].data.nested == 0 or BLOCKS.group.blocks[i].data.event then
+                        for j = i + 1, #BLOCKS.group.blocks do
+                            local name = BLOCKS.group.blocks[j].data.name
+                            local notNested = not (BLOCKS.group.blocks[j].data.nested and #BLOCKS.group.blocks[j].data.nested > 0)
+                            if BLOCKS.group.blocks[i].data.event and BLOCKS.group.blocks[j].data.event then break end
+                            data.scripts[CURRENT_SCRIPT].params[j].comment = BLOCKS.group.blocks[i].data.comment
+                            BLOCKS.group.blocks[j].block:setFillColor(INFO.getBlockColor(BLOCKS.group.blocks[j].data.name, BLOCKS.group.blocks[i].data.comment))
+                            BLOCKS.group.blocks[j].data.comment = BLOCKS.group.blocks[i].data.comment
+
+                            if not BLOCKS.group.blocks[i].data.event then
+                                if name == BLOCKS.group.blocks[i].data.name and notNested then
+                                    nestedEndIndex = nestedEndIndex + 1
+                                elseif name == INFO.listNested[BLOCKS.group.blocks[i].data.name][endIndex] then
+                                    nestedEndIndex = nestedEndIndex - 1
+                                    if nestedEndIndex == 0 then break end
+                                end
+                            end
+                        end
                     end
                 end
             end
@@ -161,22 +220,44 @@ listeners.but_okay = function(target)
             if BLOCKS.group.blocks[i].checkbox.isOn then
                 BLOCKS.group.blocks[i].checkbox:setState({isOn = false})
 
-                if #BLOCKS.group.blocks[i].data.nested > 0 then
+                if BLOCKS.group.blocks[i].data.nested and BLOCKS.group.blocks[i].polygon.yScale == 1 then
                     for j = 1, #BLOCKS.group.blocks[i].data.nested do
                         local blockIndex, blockData = i + j, COPY_TABLE(BLOCKS.group.blocks[i].data.nested[j])
                         table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
-                        BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment)
+                        BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment, blockData.nested)
                     end
 
+                    BLOCKS.group.blocks[i].polygon.yScale = -1
+                    BLOCKS.group.blocks[i].polygon:setFillColor(1)
                     data.scripts[CURRENT_SCRIPT].params[i].nested, BLOCKS.group.blocks[i].data.nested = {}, {}
                 else
-                    for j = i + 1, #BLOCKS.group.blocks do
-                        if BLOCKS.group.blocks[i + 1].data.event then break end
-                        table.insert(BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[i + 1].data)
-                        BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i + 1].block.height + 4
-                        if BLOCKS.group.blocks[i + 1].data.event then BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - 24 end
-                        BLOCKS.group.blocks[i + 1]:removeSelf() table.remove(BLOCKS.group.blocks, i + 1)
-                        table.remove(data.scripts[CURRENT_SCRIPT].params, i + 1)
+                    if BLOCKS.group.blocks[i].data.event then
+                        for j = i + 1, #BLOCKS.group.blocks do
+                            if BLOCKS.group.blocks[i + 1].data.event then break end
+                            table.insert(BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[i + 1].data)
+                            BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i + 1].block.height + 4
+                            BLOCKS.group.blocks[i + 1]:removeSelf() table.remove(BLOCKS.group.blocks, i + 1)
+                            table.remove(data.scripts[CURRENT_SCRIPT].params, i + 1)
+                        end
+                    elseif INFO.listNested[BLOCKS.group.blocks[i].data.name] then
+                        local endIndex = #INFO.listNested[BLOCKS.group.blocks[i].data.name]
+                        local nestedEndIndex = 1
+
+                        for j = i + 1, #BLOCKS.group.blocks do
+                            local name = BLOCKS.group.blocks[i + 1].data.name
+                            local notNested = not (BLOCKS.group.blocks[i + 1].data.nested and #BLOCKS.group.blocks[i + 1].data.nested > 0)
+                            table.insert(BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[i + 1].data)
+                            BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i + 1].block.height + 4
+                            BLOCKS.group.blocks[i + 1]:removeSelf() table.remove(BLOCKS.group.blocks, i + 1)
+                            table.remove(data.scripts[CURRENT_SCRIPT].params, i + 1)
+
+                            if name == BLOCKS.group.blocks[i].data.name and notNested then
+                                nestedEndIndex = nestedEndIndex + 1
+                            elseif name == INFO.listNested[BLOCKS.group.blocks[i].data.name][endIndex] then
+                                nestedEndIndex = nestedEndIndex - 1
+                                if nestedEndIndex == 0 then break end
+                            end
+                        end
                     end
 
                     for i = 1, #BLOCKS.group.blocks do
@@ -184,6 +265,8 @@ listeners.but_okay = function(target)
                         if BLOCKS.group.blocks[i].data.event then y = y + 24 end BLOCKS.group.blocks[i].y = y BLOCKS.group[8]:setScrollHeight(BLOCKS.group.scrollHeight)
                     end
 
+                    BLOCKS.group.blocks[i].polygon.yScale = 1
+                    BLOCKS.group.blocks[i].polygon:setFillColor(0.25)
                     data.scripts[CURRENT_SCRIPT].params[i].nested = BLOCKS.group.blocks[i].data.nested
                 end
 

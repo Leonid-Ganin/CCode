@@ -1,6 +1,9 @@
+local LIST = require 'Core.Modules.interface-list'
 local BLOCK = require 'Core.Modules.logic-block'
 local TEXT = require 'Core.Editor.text'
+local INFO = require 'Data.info'
 local M = {}
+local dataButtons = {STR['editor.list.event'], STR['editor.list.script'], STR['editor.list.project']}
 
 M.find = function(data)
     for i = 1, #data do
@@ -8,6 +11,42 @@ M.find = function(data)
             return i
         end
     end
+end
+
+M.rect = function(index, data, restart)
+    if INFO.listName[restart[1]][index + 1] == 'value' then
+        restart[5], restart[4] = true, index
+        restart[3] = COPY_TABLE(data.scripts[CURRENT_SCRIPT].params[restart[2]].params[restart[4]])
+        EDITOR.group:removeSelf() EDITOR.group = nil
+        EDITOR.create(unpack(restart))
+        EDITOR.group.isVisible = true
+    end
+end
+
+M.list = function(target)
+    EDITOR.group[9]:setIsLocked(true, 'vertical')
+    EDITOR.group[66]:setIsLocked(true, 'vertical')
+    LIST.new({STR['button.copy'], STR['button.paste'], STR['button.alldelete']}, MAX_X, target.y - target.height / 2, 'down', function(e)
+        EDITOR.group[9]:setIsLocked(false, 'vertical')
+        EDITOR.group[66]:setIsLocked(false, 'vertical')
+
+        if e.index ~= 0 then
+            if e.index == 3 then
+                EDITOR.cursor[2] = 'w'
+                EDITOR.cursor[1] = 1
+                EDITOR.data = {{'|', '|'}}
+                EDITOR.backup = M.backup(EDITOR.backup, 'add', EDITOR.data)
+                TEXT.set(TEXT.gen(EDITOR.data, EDITOR.cursor[2]), EDITOR.group[9])
+            elseif e.index == 2 and EDITOR.copy then
+                EDITOR.data = COPY_TABLE(EDITOR.copy[1])
+                EDITOR.cursor = COPY_TABLE(EDITOR.copy[2])
+                EDITOR.backup = M.backup(EDITOR.backup, 'add', EDITOR.data)
+                TEXT.set(TEXT.gen(EDITOR.data, EDITOR.cursor[2]), EDITOR.group[9])
+            elseif e.index == 1 then
+                EDITOR.copy = {COPY_TABLE(EDITOR.data), COPY_TABLE(EDITOR.cursor)}
+            end
+        end
+    end, nil, nil, 1)
 end
 
 M.backup = function(backup, mode, data, cursor)
@@ -112,6 +151,17 @@ M['Local'] = function(data, cursor, backup)
 end
 
 M['Hide'] = function(data, cursor, backup)
+    local list = require 'Core.Editor.list'
+    EDITOR.group[66]:scrollToPosition({y = 0, time = 0})
+
+    for i = 1, 7 do
+        if EDITOR.group[66].buttons[i].isOpen then
+            local buttons = i < 3 and dataButtons or i == 3 and EDITOR.fun or i == 4 and EDITOR.math
+            or i == 5 and EDITOR.prop or i == 6 and EDITOR.log or EDITOR.device
+            list.set(EDITOR.group[66].buttons[i], buttons, i < 3, i > 2)
+        end
+    end
+
     return data, cursor, backup
 end
 

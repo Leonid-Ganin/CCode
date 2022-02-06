@@ -35,6 +35,8 @@ M.listBlock = {
 
     ['control'] = {
         'requestApi',
+        'ifEnd',
+        'if',
     }
 }
 
@@ -48,9 +50,14 @@ M.listName = {
 
     -- control
     ['requestApi'] = {'control', 'text'},
+    ['if'] = {'control', 'value'},
+    ['ifEnd'] = {'control'},
 }
 
-M.listNested = {}
+M.listNested = {
+    ['if'] = {'ifEnd'}
+}
+
 M.listBlock.everyone = {}
 
 for k in pairs(M.listName) do

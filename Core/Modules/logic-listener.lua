@@ -1,80 +1,171 @@
 local LIST = require 'Core.Modules.logic-list'
+local INFO = require 'Data.info'
 local M = {}
 
 function onCheckboxPress(e)
     local last_checkbox = e.target.getIndex(e.target)
+    local name = BLOCKS.group.blocks[last_checkbox].data.name
 
-    if LAST_CHECKBOX ~= 0 and BLOCKS.group.blocks[LAST_CHECKBOX].data.event and last_checkbox ~= LAST_CHECKBOX then
-        if not MORE_LIST then
+    if UTF8.sub(name, UTF8.len(name) - 2, UTF8.len(name)) ~= 'End' then
+        if LAST_CHECKBOX ~= 0 and BLOCKS.group.blocks[LAST_CHECKBOX].data.event and last_checkbox ~= LAST_CHECKBOX and not MORE_LIST then
             for i = LAST_CHECKBOX + 1, #BLOCKS.group.blocks do
                 if BLOCKS.group.blocks[i].data.event then break end
                 BLOCKS.group.blocks[i].checkbox.isVisible = true
                 BLOCKS.group.blocks[i].checkbox:setState({isOn = false})
             end
+        elseif LAST_CHECKBOX ~= 0 and BLOCKS.group.blocks[LAST_CHECKBOX].data.nested and last_checkbox ~= LAST_CHECKBOX and not MORE_LIST then
+            local endIndex = #INFO.listNested[BLOCKS.group.blocks[LAST_CHECKBOX].data.name]
+            local nestedEndIndex = 1
+
+            if #BLOCKS.group.blocks[LAST_CHECKBOX].data.nested == 0 then
+                for i = LAST_CHECKBOX + 1, #BLOCKS.group.blocks do
+                    local name = BLOCKS.group.blocks[i].data.name
+                    local notNested = not (BLOCKS.group.blocks[i].data.nested and #BLOCKS.group.blocks[i].data.nested > 0)
+                    BLOCKS.group.blocks[i].checkbox.isVisible = true
+                    BLOCKS.group.blocks[i].checkbox:setState({isOn = false})
+
+                    if name == BLOCKS.group.blocks[LAST_CHECKBOX].data.name and notNested then
+                        nestedEndIndex = nestedEndIndex + 1
+                    elseif name == INFO.listNested[BLOCKS.group.blocks[LAST_CHECKBOX].data.name][endIndex] then
+                        nestedEndIndex = nestedEndIndex - 1
+                        if nestedEndIndex == 0 then break end
+                    end
+                end
+            end
         end
-    end
 
-    if LAST_CHECKBOX ~= 0 then
-        e.target.checkbox:setState({isOn = not e.target.checkbox.isOn})
-        if LAST_CHECKBOX ~= last_checkbox and not MORE_LIST then
-            BLOCKS.group.blocks[LAST_CHECKBOX].checkbox:setState({isOn = false})
-        end LAST_CHECKBOX = last_checkbox
-    else
-        e.target.checkbox:setState({isOn = true}) LAST_CHECKBOX = last_checkbox
-    end
+        if LAST_CHECKBOX ~= 0 then
+            e.target.checkbox:setState({isOn = not e.target.checkbox.isOn})
+            if LAST_CHECKBOX ~= last_checkbox and not MORE_LIST then
+                BLOCKS.group.blocks[LAST_CHECKBOX].checkbox:setState({isOn = false})
+            end LAST_CHECKBOX = last_checkbox
+        else
+            e.target.checkbox:setState({isOn = true}) LAST_CHECKBOX = last_checkbox
+        end
 
-    if e.target.data.event and last_checkbox == LAST_CHECKBOX then
-        for i = last_checkbox + 1, #BLOCKS.group.blocks do
-            if BLOCKS.group.blocks[i].data.event then break end
-            BLOCKS.group.blocks[i].checkbox.isVisible = not e.target.checkbox.isOn
-            BLOCKS.group.blocks[i].checkbox:setState({isOn = e.target.checkbox.isOn})
+        if e.target.data.event and last_checkbox == LAST_CHECKBOX then
+            for i = last_checkbox + 1, #BLOCKS.group.blocks do
+                if BLOCKS.group.blocks[i].data.event then break end
+                BLOCKS.group.blocks[i].checkbox.isVisible = not e.target.checkbox.isOn
+                BLOCKS.group.blocks[i].checkbox:setState({isOn = e.target.checkbox.isOn})
+            end
+        elseif e.target.data.nested and last_checkbox == LAST_CHECKBOX then
+            local endIndex = #INFO.listNested[e.target.data.name]
+            local nestedEndIndex = 1
+
+            if #e.target.data.nested == 0 then
+                for i = last_checkbox + 1, #BLOCKS.group.blocks do
+                    local name = BLOCKS.group.blocks[i].data.name
+                    local notNested = not (BLOCKS.group.blocks[i].data.nested and #BLOCKS.group.blocks[i].data.nested > 0)
+                    BLOCKS.group.blocks[i].checkbox.isVisible = not e.target.checkbox.isOn
+                    BLOCKS.group.blocks[i].checkbox:setState({isOn = e.target.checkbox.isOn})
+
+                    if name == e.target.data.name and notNested then
+                        nestedEndIndex = nestedEndIndex + 1
+                    elseif name == INFO.listNested[e.target.data.name][endIndex] then
+                        nestedEndIndex = nestedEndIndex - 1
+                        if nestedEndIndex == 0 then break end
+                    end
+                end
+            end
         end
     end
 end
 
 function newMoveLogicBlock(e, group, scroll, isNewBlock)
     if #group.blocks > 1 then
-        if e.target.data.event then
-            for i = 2, #group.blocks do
-                if group.blocks[i].data.event then
-                    break
-                elseif i == #group.blocks then
-                    e.target.move = false
-                    return
+        if ALERT then
+            if e.target.data.event then
+                for i = 2, #group.blocks do
+                    if group.blocks[i].data.event then
+                        break
+                    elseif i == #group.blocks then
+                        e.target.move = false
+                        return
+                    end
                 end
             end
-        end
 
-        ALERT = false
-        scroll:setIsLocked(true, 'vertical')
-        M.index = e.target.getIndex(e.target)
-        M.data = GET_GAME_CODE(CURRENT_LINK)
-        M.nestedBlocks, M.nestedData = {}, {}
-        M.diffY = scroll.y - scroll.height / 2
-        e.target.x, M.lastY = e.target.x + 40, e.target.y
+            ALERT = false
+            scroll:setIsLocked(true, 'vertical')
+            M.index = e.target.getIndex(e.target)
+            M.data = GET_GAME_CODE(CURRENT_LINK)
+            M.isEnd = UTF8.sub(e.target.data.name, UTF8.len(e.target.data.name) - 2, UTF8.len(e.target.data.name)) == 'End'
+            M.nestedBlocks, M.nestedData = {}, {}
+            M.diffY = scroll.y - scroll.height / 2
+            e.target.x, M.lastY = e.target.x + 40, e.target.y
 
-        if e.target.data.event and not isNewBlock then
-            local y = 0
+            if M.isEnd then
+                local nestedName = UTF8.sub(e.target.data.name, 1, UTF8.len(e.target.data.name) - 3)
+                local nestedEndIndex = 1
 
-            for i = M.index + 1, #group.blocks do
-                if group.blocks[M.index + 1].data.event then
-                    break
+                for i = M.index - 1, 1, -1 do
+                    local name = group.blocks[i].data.name
+                    local notNested = not (group.blocks[i].data.nested and #group.blocks[i].data.nested > 0)
+
+                    if name == nestedName and notNested then
+                        nestedEndIndex = nestedEndIndex - 1
+                        if nestedEndIndex == 0 then M.stopY = group.blocks[i].y break end
+                    elseif name == e.target.data.name then
+                        nestedEndIndex = nestedEndIndex + 1
+                    end
                 end
 
-                y = y + group.blocks[M.index + 1].block.height - 4
-                table.insert(M.nestedData, M.data.scripts[CURRENT_SCRIPT].params[M.index + 1])
-                table.insert(M.nestedBlocks, group.blocks[M.index + 1])
-                table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index + 1)
-                table.remove(group.blocks, M.index + 1)
+                for i = M.index + 1, #group.blocks do
+                    if group.blocks[i].data.event then
+                        M.stopY2 = group.blocks[i].y
+                        break
+                    end
+                end
             end
 
-            for i = M.index + 1, #group.blocks do
-                group.blocks[i].y = group.blocks[i].y - y
-            end
+            if e.target.data.nested then
+                local y = 0
+                local endIndex = 1
+                local nestedEndIndex = 1
 
-            for i = 1, #M.nestedBlocks do
-                M.nestedBlocks[i].isVisible = false
+                if not e.target.data.event then
+                    endIndex = #INFO.listNested[e.target.data.name]
+                end
+
+                if #e.target.data.nested == 0 or e.target.data.event then
+                    if not e.target.data.event or not isNewBlock then
+                        for i = M.index + 1, #group.blocks do
+                            local name = group.blocks[M.index + 1].data.name
+                            local notNested = not (group.blocks[M.index + 1].data.nested and #group.blocks[M.index + 1].data.nested > 0)
+
+                            if e.target.data.event and group.blocks[M.index + 1].data.event then
+                                break
+                            end
+
+                            y = y + group.blocks[M.index + 1].block.height - 4
+                            table.insert(M.nestedData, M.data.scripts[CURRENT_SCRIPT].params[M.index + 1])
+                            table.insert(M.nestedBlocks, group.blocks[M.index + 1])
+                            table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index + 1)
+                            table.remove(group.blocks, M.index + 1)
+
+                            if not e.target.data.event then
+                                if name == e.target.data.name and notNested then
+                                    nestedEndIndex = nestedEndIndex + 1
+                                elseif name == INFO.listNested[e.target.data.name][endIndex] then
+                                    nestedEndIndex = nestedEndIndex - 1
+                                    if nestedEndIndex == 0 then break end
+                                end
+                            end
+                        end
+                    end
+                end
+
+                for i = M.index + 1, #group.blocks do
+                    group.blocks[i].y = group.blocks[i].y - y
+                end
+
+                for i = 1, #M.nestedBlocks do
+                    M.nestedBlocks[i].isVisible = false
+                end
             end
+        else
+            e.target.move = false
         end
     end
 end
@@ -93,41 +184,45 @@ local function updMoveLogicBlock(e, group, scroll)
             scroll:scrollToPosition({y = scrollY + 15, time = 0})
         end
 
-        if e.target.y > M.lastY then
-            if group.blocks[M.index + 1] then
-                local countBlocksReplace = 0
-                local block = M.data.scripts[CURRENT_SCRIPT].params[M.index]
+        if not M.stopY or e.target.y > M.stopY then
+            if not M.stopY2 or e.target.y < M.stopY2 then
+                if e.target.y > M.lastY then
+                    if group.blocks[M.index + 1] then
+                        local countBlocksReplace = 0
+                        local block = M.data.scripts[CURRENT_SCRIPT].params[M.index]
 
-                for i = M.index + 1, #group.blocks do
-                    if group.blocks[i] and group.blocks[i].y < e.target.y then
-                        group.blocks[i].y = group.blocks[i].y - (e.target.block.height - 4 + addHeight)
-                        countBlocksReplace = countBlocksReplace + 1
-                    else break end
+                        for i = M.index + 1, #group.blocks do
+                            if group.blocks[i] and group.blocks[i].y < e.target.y then
+                                group.blocks[i].y = group.blocks[i].y - (e.target.block.height - 4 + addHeight)
+                                countBlocksReplace = countBlocksReplace + 1
+                            else break end
+                        end
+
+                        M.index = M.index + countBlocksReplace
+                        table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index - countBlocksReplace)
+                        table.insert(group.blocks, M.index + 1, e.target)
+                        table.remove(group.blocks, M.index - countBlocksReplace)
+                        table.insert(M.data.scripts[CURRENT_SCRIPT].params, M.index, block)
+                    end
+                elseif e.target.y < M.lastY then
+                    if group.blocks[M.index - 1] and (M.index ~= 2 or e.target.data.event) then
+                        local countBlocksReplace = 0
+                        local block = M.data.scripts[CURRENT_SCRIPT].params[M.index]
+
+                        for i = M.index - 1, 1, -1 do
+                            if group.blocks[i] and group.blocks[i].y > e.target.y then
+                                group.blocks[i].y = group.blocks[i].y + (e.target.block.height - 4 + addHeight)
+                                countBlocksReplace = countBlocksReplace + 1
+                            else break end
+                        end
+
+                        M.index = M.index - countBlocksReplace
+                        table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index + countBlocksReplace)
+                        table.insert(group.blocks, M.index, e.target)
+                        table.remove(group.blocks, M.index + countBlocksReplace + 1)
+                        table.insert(M.data.scripts[CURRENT_SCRIPT].params, M.index, block)
+                    end
                 end
-
-                M.index = M.index + countBlocksReplace
-                table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index - countBlocksReplace)
-                table.insert(group.blocks, M.index + 1, e.target)
-                table.remove(group.blocks, M.index - countBlocksReplace)
-                table.insert(M.data.scripts[CURRENT_SCRIPT].params, M.index, block)
-            end
-        elseif e.target.y < M.lastY then
-            if group.blocks[M.index - 1] and (M.index ~= 2 or e.target.data.event) then
-                local countBlocksReplace = 0
-                local block = M.data.scripts[CURRENT_SCRIPT].params[M.index]
-
-                for i = M.index - 1, 1, -1 do
-                    if group.blocks[i] and group.blocks[i].y > e.target.y then
-                        group.blocks[i].y = group.blocks[i].y + (e.target.block.height - 4 + addHeight)
-                        countBlocksReplace = countBlocksReplace + 1
-                    else break end
-                end
-
-                M.index = M.index - countBlocksReplace
-                table.remove(M.data.scripts[CURRENT_SCRIPT].params, M.index + countBlocksReplace)
-                table.insert(group.blocks, M.index, e.target)
-                table.remove(group.blocks, M.index + countBlocksReplace + 1)
-                table.insert(M.data.scripts[CURRENT_SCRIPT].params, M.index, block)
             end
         end
 
@@ -139,8 +234,9 @@ local function stopMoveLogicBlock(e, group, scroll)
     if #group.blocks > 1 then
         local y = M.index == 1 and 50 or group.blocks[M.index - 1].y + group.blocks[M.index - 1].block.height / 2 + e.target.block.height / 2 - 4
         e.target.x, e.target.y = e.target.x - 40, e.target.data.event and y + 24 or y
+        M.stopY, M.stopY2 = nil, nil
 
-        if e.target.data.event and #M.nestedBlocks > 0 then
+        if e.target.data.nested and #M.nestedBlocks > 0 then
             local y, index = 0, M.index + #M.nestedBlocks
 
             for i = 1, #M.nestedBlocks do

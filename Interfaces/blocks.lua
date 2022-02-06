@@ -4,12 +4,12 @@ local M = {}
 local genBlocks = function(data)
     for i = 1, #data.scripts[CURRENT_SCRIPT].params do
         local params = data.scripts[CURRENT_SCRIPT].params[i]
-        M.new(params.name, i, params.event, params.params, params.comment, params.nested)
+        M.new(params.name, i, params.event, params.params, params.comment, params.nested, params.vars, params.tables)
     end
 end
 
-M.new = function(name, index, event, params, comment, nested)
-    BLOCK.new(name, M.scroll, M.group, index, event, params, comment, nested)
+M.new = function(name, index, event, params, comment, nested, vars, tables)
+    BLOCK.new(name, M.scroll, M.group, index, event, params, comment, nested, vars, tables)
 end
 
 M.create = function()

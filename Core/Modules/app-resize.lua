@@ -1,5 +1,5 @@
-local function appResize()
-    ORIENTATION.lock('all')
+local function appResize(type)
+    ORIENTATION.lock(type == 'portrait' and 'portrait' or 'landscape')
     CENTER_X = display.contentCenterX
     CENTER_Y = display.contentCenterY
     DISPLAY_WIDTH = display.actualContentWidth
@@ -26,7 +26,7 @@ end
 
 Runtime:addEventListener('orientation', function(event)
     if ALERT then
-        local vis = appResize()
+        local vis = appResize(event.type)
 
         if MENU and MENU.group then
             vis = MENU.group.isVisible
@@ -108,9 +108,18 @@ Runtime:addEventListener('orientation', function(event)
             BLOCKS.group.isVisible = vis
         end
 
+        if NEW_BLOCK and NEW_BLOCK.group then
+            vis = NEW_BLOCK.group.isVisible
+            NEW_BLOCK.group:removeSelf()
+            NEW_BLOCK.group = nil
+            NEW_BLOCK.create()
+            NEW_BLOCK.group.isVisible = vis
+        end
+
         if EDITOR and EDITOR.group then
             vis = EDITOR.group.isVisible
             restart = COPY_TABLE(EDITOR.restart)
+            restart[5] = true
             EDITOR.group:removeSelf()
             EDITOR.group = nil
             EDITOR.create(unpack(restart))

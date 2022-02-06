@@ -45,18 +45,31 @@ M.gen = function(params, mode)
     local text = ''
 
     for i = 1, #params do
-        if params[i][2] == 'v' then
+        if params[i][2] == 'vE' or params[i][2] == 'vS' or params[i][2] == 'vP' then
             text = text .. '"' .. params[i][1] .. '"'
         elseif params[i][2] == 't' then
             text = text .. '\'' .. params[i][1] .. '\''
-        elseif params[i][2] == 's' or params[i][2] == 'n' or params[i][2] == 'l' then
+        elseif params[i][2] == 's' or params[i][2] == 'n' then
             text = text .. params[i][1]
+        elseif params[i][2] == 'f' then
+            text = text .. STR['editor.list.fun.' .. params[i][1]]
+        elseif params[i][2] == 'm' then
+            text = text .. STR['editor.list.math.' .. params[i][1]]
+        elseif params[i][2] == 'p' then
+            text = text .. STR['editor.list.prop.' .. params[i][1]]
+        elseif params[i][2] == 'l' then
+            if STR['editor.list.log.' .. params[i][1]]
+            then text = text .. STR['editor.list.log.' .. params[i][1]]
+            else text = text .. params[i][1] end
+        elseif params[i][2] == 'd' then
+            text = text .. STR['editor.list.device.' .. params[i][1]]
         elseif params[i][2] == '|' then
             text = mode == 'w' and text .. params[i][1] or UTF8.sub(text, 1, UTF8.len(text) - 3) .. ' |\''
         end
 
         if i ~= #params then
             if not ((params[i][2] == 'n' and params[i + 1][2] == 'n') or (params[i + 1][2] == 's' and params[i + 1][1] == ',')
+            or (params[i + 1][2] == 's' and params[i + 1][1] == '(' and (params[i][2] == 'f' or params[i][2] == 'm' or params[i][2] == 'p'))
             or (params[i + 1][2] == 's' and params[i + 1][1] == ')') or (params[i][2] == 's' and params[i][1] == '(')
             or (params[i + 1][2] == 's' and params[i + 1][1] == ']') or (params[i][2] == 's' and params[i][1] == '[')
             or (params[i][2] == 'n' and params[i + 1][2] == '|' and params[i + 2] and params[i + 2][2] == 'n')

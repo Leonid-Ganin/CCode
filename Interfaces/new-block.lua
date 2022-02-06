@@ -49,7 +49,14 @@ local function newBlockListener(event)
             local blockName = INFO.listBlock[INFO.listType[event.target.index[1]]][event.target.index[2]]
             local blockEvent = INFO.getType(blockName) == 'events'
             local blockIndex = #BLOCKS.group.blocks + 1
-            local blockParams = {name = blockName, params = {}, event = blockEvent, comment = false, nested = blockEvent and {} or nil}
+            local blockParams = {
+                name = blockName, params = {}, event = blockEvent, comment = false,
+                nested = blockEvent and {} or nil, vars = blockEvent and {} or nil, tables = blockEvent and {} or nil
+            }
+
+            for i = 1, #INFO.listName[blockName] - 1 do
+                blockParams.params[i] = {}
+            end
 
             for i = 1, #BLOCKS.group.blocks do
                 if BLOCKS.group.blocks[i].y > targetY then
@@ -58,13 +65,25 @@ local function newBlockListener(event)
             end
 
             if not blockEvent and #BLOCKS.group.blocks == 0 then
-                table.insert(data.scripts[CURRENT_SCRIPT].params, 1, {name = 'onStart', params = {}, event = true, comment = false, nested = {}})
-                BLOCKS.new('onStart', 1, true, {}, false, {}) blockIndex = 2
+                table.insert(data.scripts[CURRENT_SCRIPT].params, 1, {
+                    name = 'onStart', params = {{}}, event = true, comment = false,
+                    nested = {}, vars = {}, tables = {}
+                }) BLOCKS.new('onStart', 1, true, {{}}, false, {}) blockIndex = 2
             end
 
+            if INFO.listNested[blockName] then
+                blockParams.nested = {}
+                for i = 1, #INFO.listNested[blockName] do
+                    table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, {
+                        name = INFO.listNested[blockName][i], params = {{}}, event = false, comment = false
+                    }) BLOCKS.new(INFO.listNested[blockName][i], blockIndex, false, {{}}, false)
+                end
+            end
+
+            native.setKeyboardFocus(nil)
             table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockParams)
             SET_GAME_CODE(CURRENT_LINK, data)
-            BLOCKS.new(blockName, blockIndex, blockEvent, {}, false, blockEvent and {} or nil)
+            BLOCKS.new(blockName, blockIndex, blockEvent, COPY_TABLE(blockParams.params), false, blockParams.nested)
 
             if #BLOCKS.group.blocks > 2 then
                 display.getCurrentStage():setFocus(BLOCKS.group.blocks[blockIndex])
@@ -200,28 +219,31 @@ M.create = function()
 
         if INFO.listType[i] ~= 'none' then
             for j = 1, #INFO.listBlock[INFO.listType[i]] do
-                local event = INFO.getType(INFO.listBlock[INFO.listType[i]][j]) == 'events'
+                local name = INFO.listBlock[INFO.listType[i]][j]
+                if UTF8.sub(name, UTF8.len(name) - 2, UTF8.len(name)) ~= 'End' then
+                    local event = INFO.getType(INFO.listBlock[INFO.listType[i]][j]) == 'events'
 
-                M.group.types[i].blocks[j] = display.newPolygon(0, 0, BLOCK.getPolygonParams(event, DISPLAY_WIDTH - BOTTOM_WIDTH - 60, event and 102 or 116))
-                    M.group.types[i].blocks[j].x = DISPLAY_WIDTH / 2
-                    M.group.types[i].blocks[j].y = lastY
-                    M.group.types[i].blocks[j]:setFillColor(INFO.getBlockColor(INFO.listBlock[INFO.listType[i]][j]))
-                    M.group.types[i].blocks[j]:setStrokeColor(0.3)
-                    M.group.types[i].blocks[j].strokeWidth = 4
-                    M.group.types[i].blocks[j].index = {i, j}
-                    M.group.types[i].blocks[j]:addEventListener('touch', newBlockListener)
-                M.group.types[i].scroll:insert(M.group.types[i].blocks[j])
+                    M.group.types[i].blocks[j] = display.newPolygon(0, 0, BLOCK.getPolygonParams(event, DISPLAY_WIDTH - BOTTOM_WIDTH - 60, event and 102 or 116))
+                        M.group.types[i].blocks[j].x = DISPLAY_WIDTH / 2
+                        M.group.types[i].blocks[j].y = lastY
+                        M.group.types[i].blocks[j]:setFillColor(INFO.getBlockColor(name))
+                        M.group.types[i].blocks[j]:setStrokeColor(0.3)
+                        M.group.types[i].blocks[j].strokeWidth = 4
+                        M.group.types[i].blocks[j].index = {i, j}
+                        M.group.types[i].blocks[j]:addEventListener('touch', newBlockListener)
+                    M.group.types[i].scroll:insert(M.group.types[i].blocks[j])
 
-                M.group.types[i].blocks[j].text = display.newText({
-                        text = STR['blocks.' .. INFO.listBlock[INFO.listType[i]][j]],
-                        x = DISPLAY_WIDTH / 2 - M.group.types[i].blocks[j].width / 2 + 20,
-                        y = lastY, width = M.group.types[i].blocks[j].width - 40,
-                        height = 40, font = 'ubuntu', fontSize = 32, align = 'left'
-                    }) M.group.types[i].blocks[j].text.anchorX = 0
-                M.group.types[i].scroll:insert(M.group.types[i].blocks[j].text)
+                    M.group.types[i].blocks[j].text = display.newText({
+                            text = STR['blocks.' .. name],
+                            x = DISPLAY_WIDTH / 2 - M.group.types[i].blocks[j].width / 2 + 20,
+                            y = lastY, width = M.group.types[i].blocks[j].width - 40,
+                            height = 40, font = 'ubuntu', fontSize = 32, align = 'left'
+                        }) M.group.types[i].blocks[j].text.anchorX = 0
+                    M.group.types[i].scroll:insert(M.group.types[i].blocks[j].text)
 
-                lastY = lastY + 140
-                scrollHeight = scrollHeight + 140
+                    lastY = lastY + 140
+                    scrollHeight = scrollHeight + 140
+                end
             end
         end
 

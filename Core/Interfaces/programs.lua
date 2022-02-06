@@ -46,7 +46,7 @@ end
 listeners.but_list = function(target)
     if #PROGRAMS.group.blocks > 0 then
         PROGRAMS.group[8]:setIsLocked(true, 'vertical')
-        LIST.new({STR['button.remove'], STR['button.rename'], STR['button.copy']}, MAX_X, target.y - target.height / 2, 'down', function(e)
+        LIST.new({STR['button.remove'], STR['button.rename']--[[, STR['button.copy']]}, MAX_X, target.y - target.height / 2, 'down', function(e)
             PROGRAMS.group[8]:setIsLocked(false, 'vertical')
 
             if e.index ~= 0 then
@@ -75,12 +75,12 @@ listeners.but_list = function(target)
                     PROGRAMS.group.blocks[i].checkbox.isVisible = true
                 end
             elseif e.index == 3 then
-                MORE_LIST = false
-                PROGRAMS.group[3].text = '(' .. STR['button.copy'] .. ')'
-
-                for i = 1, #PROGRAMS.group.blocks do
-                    PROGRAMS.group.blocks[i].checkbox.isVisible = true
-                end
+                -- MORE_LIST = false
+                -- PROGRAMS.group[3].text = '(' .. STR['button.copy'] .. ')'
+                --
+                -- for i = 1, #PROGRAMS.group.blocks do
+                --     PROGRAMS.group.blocks[i].checkbox.isVisible = true
+                -- end
             end
         end, nil, nil, 1)
     end
@@ -153,43 +153,43 @@ listeners.but_okay = function(target)
             end
         end
     elseif INDEX_LIST == 3 then
-        for i = #PROGRAMS.group.blocks, 1, -1 do
-            PROGRAMS.group.blocks[i].checkbox.isVisible = false
-
-            if PROGRAMS.group.blocks[i].checkbox.isOn then
-                PROGRAMS.group.blocks[i].checkbox:setState({isOn=false})
-                INPUT.new(STR['programs.entername'], function(event)
-                    if (event.phase == 'ended' or event.phase == 'submitted') and not ALERT then
-                        INPUT.remove(true, event.target.text)
-                    end
-                end, function(e)
-                    if e.input then
-                        local numApp = 1
-                        while true do
-                            local file = io.open(DOC_DIR .. '/App' .. numApp .. '/game.json', 'r')
-                            if file then
-                                numApp = numApp + 1
-                                io.close(file)
-                            else
-                                local data = GET_GAME_CODE(PROGRAMS.group.blocks[i].link)
-                                data.link = 'App' .. numApp
-                                data.title = e.text
-
-                                LOCAL.apps[#LOCAL.apps + 1] = 'App' .. numApp
-                                LFS.mkdir(DOC_DIR .. '/App' .. numApp)
-                                OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link, DOC_DIR .. '/App' .. numApp)
-
-                                NEW_DATA()
-                                SET_GAME_CODE('App' .. numApp, data)
-                                PROGRAMS.new(e.text, 'App' .. numApp)
-
-                                break
-                            end
-                        end
-                    end
-                end, PROGRAMS.group.blocks[i].text.text)
-            end
-        end
+        -- for i = #PROGRAMS.group.blocks, 1, -1 do
+        --     PROGRAMS.group.blocks[i].checkbox.isVisible = false
+        --
+        --     if PROGRAMS.group.blocks[i].checkbox.isOn then
+        --         PROGRAMS.group.blocks[i].checkbox:setState({isOn=false})
+        --         INPUT.new(STR['programs.entername'], function(event)
+        --             if (event.phase == 'ended' or event.phase == 'submitted') and not ALERT then
+        --                 INPUT.remove(true, event.target.text)
+        --             end
+        --         end, function(e)
+        --             if e.input then
+        --                 local numApp = 1
+        --                 while true do
+        --                     local file = io.open(DOC_DIR .. '/App' .. numApp .. '/game.json', 'r')
+        --                     if file then
+        --                         numApp = numApp + 1
+        --                         io.close(file)
+        --                     else
+        --                         local data = GET_GAME_CODE(PROGRAMS.group.blocks[i].link)
+        --                         data.link = 'App' .. numApp
+        --                         data.title = e.text
+        --
+        --                         LOCAL.apps[#LOCAL.apps + 1] = 'App' .. numApp
+        --                         LFS.mkdir(DOC_DIR .. '/App' .. numApp)
+        --                         OS_COPY(DOC_DIR .. '/' .. PROGRAMS.group.blocks[i].link, DOC_DIR .. '/App' .. numApp)
+        --
+        --                         NEW_DATA()
+        --                         SET_GAME_CODE('App' .. numApp, data)
+        --                         PROGRAMS.new(e.text, 'App' .. numApp)
+        --
+        --                         break
+        --                     end
+        --                 end
+        --             end
+        --         end, PROGRAMS.group.blocks[i].text.text)
+        --     end
+        -- end
     end
 end
 
