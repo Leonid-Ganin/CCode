@@ -149,8 +149,9 @@ M.create = function()
     M.group.currentIndex = 1
 
     local bg = display.newImage('Sprites/bg.png', CENTER_X, CENTER_Y)
-        bg.width = DISPLAY_WIDTH
-        bg.height = DISPLAY_HEIGHT
+        bg.width = CENTER_X == 640 and DISPLAY_HEIGHT or DISPLAY_WIDTH
+        bg.height = CENTER_X == 640 and DISPLAY_WIDTH or DISPLAY_HEIGHT
+        bg.rotation = CENTER_X == 640 and 90 or 0
     M.group:insert(bg)
 
     local line = display.newRect(CENTER_X, MAX_Y - 360, DISPLAY_WIDTH, 2)

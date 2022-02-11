@@ -5,8 +5,9 @@ M.create = function()
     M.group.isVisible = false
 
     local bg = display.newImage('Sprites/menu.png', CENTER_X, CENTER_Y)
-        bg.width = DISPLAY_WIDTH
-        bg.height = DISPLAY_HEIGHT
+        bg.width = CENTER_X == 640 and DISPLAY_HEIGHT or DISPLAY_WIDTH
+        bg.height = CENTER_X == 640 and DISPLAY_WIDTH or DISPLAY_HEIGHT
+        bg.rotation = CENTER_X == 640 and 90 or 0
     M.group:insert(bg)
 
     local title = display.newText('CCode', CENTER_X, ZERO_Y + 182, 'ubuntu', 70)
@@ -104,7 +105,7 @@ M.create = function()
         title.y = ZERO_Y + 82 + 220
         title.x = CENTER_X - 350
         but_social.y = ZERO_Y + 45
-        but_social.x = ZERO_X + 10
+        but_social.x = ZERO_X + 47
         build.x, build.y = MAX_X - 100, MAX_Y - 40
         testers.y, testers.x = title.y + 75, title.x
         hat.x = title.x - title.width / 2 + 20

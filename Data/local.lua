@@ -11,7 +11,7 @@ else
     data = {
         lang = language,
         last = '',
-        status = false,
+        confirm = true,
         first = true,
         ui = true,
         apps = {},

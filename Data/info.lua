@@ -37,6 +37,8 @@ M.listBlock = {
         'requestApi',
         'ifEnd',
         'if',
+        'forEnd',
+        'for',
     }
 }
 
@@ -52,10 +54,13 @@ M.listName = {
     ['requestApi'] = {'control', 'text'},
     ['if'] = {'control', 'value'},
     ['ifEnd'] = {'control'},
+    ['for'] = {'control', 'value'},
+    ['forEnd'] = {'control'},
 }
 
 M.listNested = {
-    ['if'] = {'ifEnd'}
+    ['if'] = {'ifEnd'},
+    ['for'] = {'forEnd'},
 }
 
 M.listBlock.everyone = {}

@@ -1,4 +1,9 @@
 return {
+    ["lang.ru"] = "Russian",
+    ["lang.en"] = "English",
+    ["lang.pt"] = "Portuguese",
+    ["button.yes"] = "Yes",
+    ["button.no"] = "No",
     ["button.okay"] = "Ok",
     ["button.remove"] = "Remove",
     ["button.rename"] = "Rename",
@@ -36,7 +41,12 @@ return {
     ["videos.changename"] = "Change video name",
     ["fonts.entername"] = "Enter font name",
     ["fonts.changename"] = "Change font name",
+    ["settings.applang"] = "Application language:",
+    ["settings.confirmdelete"] = "Confirm deletion:",
 
+    ["blocks.sure?"] = "Are you sure?",
+    ["blocks.delete.yes"] = "Yes, delete",
+    ["blocks.delete.no"] = "No, don't delete",
     ["blocks.createvar"] = "Create variable",
     ["blocks.entertext"] = "Enter text",
     ["blocks.everyone"] = "All blocks",
@@ -53,6 +63,9 @@ return {
     ["blocks.ifEnd"] = "End condition",
     ["blocks.if"] = "If condition is true",
     ["blocks.if.params"] = {"Condition:"},
+    ["blocks.forEnd"] = "End repeat",
+    ["blocks.for"] = "Repeat N times",
+    ["blocks.for.params"] = {"Qty repetitions:"},
     ["blocks.requestApi"] = "Request API method",
     ["blocks.requestApi.params"] = {"Lua code:"},
 

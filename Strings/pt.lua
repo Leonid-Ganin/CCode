@@ -1,4 +1,9 @@
 return {
+    ["lang.ru"] = "Russo",
+    ["lang.en"] = "Inglês",
+    ["lang.pt"] = "Português",
+    ["button.yes"] = "Sim",
+    ["button.no"] = "Não",
     ["button.okay"] = "Ok",
     ["button.remove"] = "Remover",
     ["button.rename"] = "Renomear",
@@ -36,7 +41,12 @@ return {
     ["videos.changename"] = "Alterar nome vídeos",
     ["fonts.entername"] = "Digite nome fonte",
     ["fonts.changename"] = "Alterar nome fonte",
+    ["settings.applang"] = "Idioma aplicativo:",
+    ["settings.confirmdelete"] = "Confirmar exclusão:",
 
+    ["blocks.sure?"] = "Tem certeza?",
+    ["blocks.delete.yes"] = "Sim, excluir",
+    ["blocks.delete.no"] = "Não, não exclua",
     ["blocks.createvar"] = "Criar variável",
     ["blocks.entertext"] = "Digite texto",
     ["blocks.everyone"] = "Todos blocos",
@@ -53,6 +63,9 @@ return {
     ["blocks.ifEnd"] = "Condição final",
     ["blocks.if"] = "Se condição for verdadeira",
     ["blocks.if.params"] = {"Condição:"},
+    ["blocks.forEnd"] = "Fim das repetições",
+    ["blocks.for"] = "Repita N vezes",
+    ["blocks.for.params"] = {"Qty repetições:"},
     ["blocks.requestApi"] = "Solicitar método API",
     ["blocks.requestApi.params"] = {"Lua código:"},
 

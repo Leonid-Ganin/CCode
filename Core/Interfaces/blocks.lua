@@ -74,19 +74,43 @@ listeners.but_okay = function(target)
     end
 
     if INDEX_LIST == 1 then
-        for i = #BLOCKS.group.blocks, 1, -1 do
+        for i = 1, #BLOCKS.group.blocks do
             if BLOCKS.group.blocks[i].checkbox.isOn then
-                BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i].block.height + 4
-                if BLOCKS.group.blocks[i].data.event then BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - 24 end
-                BLOCKS.group.blocks[i]:removeSelf()
-                table.remove(BLOCKS.group.blocks, i)
-                table.remove(data.scripts[CURRENT_SCRIPT].params, i)
+                break
+            elseif i == #BLOCKS.group.blocks then
+                return
             end
         end
 
-        for i = 1, #BLOCKS.group.blocks do
-            local y = i == 1 and 50 or BLOCKS.group.blocks[i - 1].y + BLOCKS.group.blocks[i - 1].block.height / 2 + BLOCKS.group.blocks[i].height / 2 - 4
-            if BLOCKS.group.blocks[i].data.event then y = y + 24 end BLOCKS.group.blocks[i].y = y BLOCKS.group[8]:setScrollHeight(BLOCKS.group.scrollHeight)
+        local function deleteBlock()
+            for i = #BLOCKS.group.blocks, 1, -1 do
+                if BLOCKS.group.blocks[i].checkbox.isOn then
+                    BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i].block.height + 4
+                    if BLOCKS.group.blocks[i].data.event then BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - 24 end
+                    BLOCKS.group.blocks[i]:removeSelf()
+                    table.remove(BLOCKS.group.blocks, i)
+                    table.remove(data.scripts[CURRENT_SCRIPT].params, i)
+                end
+            end
+
+            for i = 1, #BLOCKS.group.blocks do
+                local y = i == 1 and 50 or BLOCKS.group.blocks[i - 1].y + BLOCKS.group.blocks[i - 1].block.height / 2 + BLOCKS.group.blocks[i].height / 2 - 4
+                if BLOCKS.group.blocks[i].data.event then y = y + 24 end BLOCKS.group.blocks[i].y = y BLOCKS.group[8]:setScrollHeight(BLOCKS.group.scrollHeight)
+            end
+
+            SET_GAME_CODE(CURRENT_LINK, data)
+            BLOCKS.group[8]:setIsLocked(false, 'vertical')
+        end
+
+        if LOCAL.confirm then
+            BLOCKS.group[8]:setIsLocked(true, 'vertical')
+            WINDOW.new(STR['blocks.sure?'], {STR['blocks.delete.no'], STR['blocks.delete.yes']}, function(e)
+                if e.index == 2 then
+                    deleteBlock()
+                end
+            end, 4)
+        else
+            deleteBlock()
         end
     elseif INDEX_LIST == 2 then
         for i = 1, #BLOCKS.group.blocks do
@@ -135,7 +159,7 @@ listeners.but_okay = function(target)
                     display.getCurrentStage():setFocus(BLOCKS.group.blocks[i])
                     BLOCKS.group.blocks[i].click = true
                     BLOCKS.group.blocks[i].move = true
-                    newMoveLogicBlock({target = BLOCKS.group.blocks[i]}, BLOCKS.group, BLOCKS.group[8])
+                    newMoveLogicBlock({target = BLOCKS.group.blocks[i]}, BLOCKS.group, BLOCKS.group[8], nil, true)
                 else
                     table.insert(data.scripts[CURRENT_SCRIPT].params, blockIndex, blockData)
                     BLOCKS.new(blockData.name, blockIndex, blockData.event, blockData.params, blockData.comment)
@@ -144,7 +168,7 @@ listeners.but_okay = function(target)
                     display.getCurrentStage():setFocus(BLOCKS.group.blocks[blockIndex])
                     BLOCKS.group.blocks[blockIndex].click = true
                     BLOCKS.group.blocks[blockIndex].move = true
-                    newMoveLogicBlock({target = BLOCKS.group.blocks[blockIndex]}, BLOCKS.group, BLOCKS.group[8])
+                    newMoveLogicBlock({target = BLOCKS.group.blocks[blockIndex]}, BLOCKS.group, BLOCKS.group[8], nil, true)
                 end
 
                 break
@@ -275,8 +299,10 @@ listeners.but_okay = function(target)
         end
     end
 
-    for i = 1, #BLOCKS.group.blocks do BLOCKS.group.blocks[i].checkbox:setState({isOn = false}) end
-    if INDEX_LIST ~= 2 then SET_GAME_CODE(CURRENT_LINK, data) end
+    if INDEX_LIST ~= 1 then
+        for i = 1, #BLOCKS.group.blocks do BLOCKS.group.blocks[i].checkbox:setState({isOn = false}) end
+        if INDEX_LIST ~= 2 then SET_GAME_CODE(CURRENT_LINK, data) end
+    end
 end
 
 return function(e)
@@ -293,7 +319,7 @@ return function(e)
             then e.target.width, e.target.height = 103, 84
             else e.target.alpha = 0.9 end
         elseif e.phase == 'ended' or e.phase == 'cancelled' then
-            display.getCurrentStage():setFocus(nil)
+            if not e.target.fake then display.getCurrentStage():setFocus(nil) end
             if e.target.click then
                 e.target.click = false
                 if e.target.button == 'but_list'

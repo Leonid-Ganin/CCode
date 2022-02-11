@@ -2,6 +2,7 @@ LANG, STR = {}, {}
 
 RESIZE = require 'Core.Modules.app-resize'
 INPUT = require 'Core.Modules.interface-input'
+WINDOW = require 'Core.Modules.interface-window'
 EXITS = require 'Core.Interfaces.exits'
 FILE = require 'plugin.cnkFileManager'
 ORIENTATION = require 'plugin.orientation'
@@ -11,11 +12,13 @@ JSON = require 'json'
 LFS = require 'lfs'
 WIDGET = require 'widget'
 LOCAL = require 'Data.local'
-LANG.ru = require 'Strings.ru'
 LANG.en = require 'Strings.en'
+LANG.ru = require 'Strings.ru'
 LANG.pt = require 'Strings.pt'
+LANGS = {'en', 'ru', 'pt'}
+for i = 1, #LANGS do if LANGS[i] == LOCAL.lang then break elseif i == #LANGS then LOCAL.lang = 'en' end end
 
-BUILD = 1112
+BUILD = 1114
 ALERT = true
 CENTER_Z = 0
 TOP_WIDTH = 0
@@ -123,7 +126,7 @@ TESTERS = {
     ['2e18faf0fbb74c53'] = 'Xoxn',
     ['dd1681c951bb96bd'] = 'HandsUp',
     ['b6a6dbbf2a9c5d1b'] = 'NіkLoath',
-    -- ['706fd7d27addc62e'] = 'Semka',
+    ['706fd7d27addc62e'] = 'Semka',
     ['f358952a7d6716f0'] = 'Lavok',
     ['908e1f611a8c2b0a'] = 'MHP_Fan',
     ['3899216020f2cf4c'] = 'Danіl Nik',

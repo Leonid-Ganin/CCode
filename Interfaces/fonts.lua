@@ -20,8 +20,9 @@ M.create = function()
     M.group.blocks = {}
 
     local bg = display.newImage('Sprites/bg.png', CENTER_X, CENTER_Y)
-        bg.width = DISPLAY_WIDTH
-        bg.height = DISPLAY_HEIGHT
+        bg.width = CENTER_X == 640 and DISPLAY_HEIGHT or DISPLAY_WIDTH
+        bg.height = CENTER_X == 640 and DISPLAY_WIDTH or DISPLAY_HEIGHT
+        bg.rotation = CENTER_X == 640 and 90 or 0
     M.group:insert(bg)
 
     local title = display.newText(STR['program.fonts'], ZERO_X + 40, ZERO_Y + 30, 'ubuntu', 50)

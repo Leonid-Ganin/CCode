@@ -1,4 +1,9 @@
 return {
+    ["lang.ru"] = "Русский",
+    ["lang.en"] = "Английский",
+    ["lang.pt"] = "Португальский",
+    ["button.yes"] = "Да",
+    ["button.no"] = "Нет",
     ["button.okay"] = "Ок",
     ["button.remove"] = "Удалить",
     ["button.rename"] = "Переименовать",
@@ -36,7 +41,12 @@ return {
     ["videos.changename"] = "Измените имя видео",
     ["fonts.entername"] = "Введите имя шрифта",
     ["fonts.changename"] = "Измените имя шрифта",
+    ["settings.applang"] = "Язык приложения:",
+    ["settings.confirmdelete"] = "Подтверждать удаление:",
 
+    ["blocks.sure?"] = "Вы уверены?",
+    ["blocks.delete.yes"] = "Да, удалить",
+    ["blocks.delete.no"] = "Нет, не удалять",
     ["blocks.createvar"] = "Создать переменную",
     ["blocks.entertext"] = "Введите текст",
     ["blocks.everyone"] = "Все блоки",
@@ -53,6 +63,9 @@ return {
     ["blocks.ifEnd"] = "Конец условия",
     ["blocks.if"] = "Если условие истина",
     ["blocks.if.params"] = {"Условие:"},
+    ["blocks.forEnd"] = "Конец повторений",
+    ["blocks.for"] = "Повторить N раз",
+    ["blocks.for.params"] = {"Кол-во повторений:"},
     ["blocks.requestApi"] = "Вызвать API метод",
     ["blocks.requestApi.params"] = {"Lua код:"},
 
