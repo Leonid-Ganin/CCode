@@ -11,6 +11,8 @@ else
     data = {
         lang = language,
         last = '',
+        show_ads = true,
+        pos_top_ads = true,
         confirm = true,
         first = true,
         ui = true,

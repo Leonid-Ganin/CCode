@@ -135,7 +135,7 @@ local function textListener(event)
                 M.group.types[1].scroll:insert(M.group.types[1].blocks[j].text)
 
                 lastY = lastY + 140
-                scrollHeight = scrollHeight + 116
+                scrollHeight = scrollHeight + 140
             end
         end
 
@@ -154,7 +154,7 @@ M.create = function()
         bg.rotation = CENTER_X == 640 and 90 or 0
     M.group:insert(bg)
 
-    local line = display.newRect(CENTER_X, MAX_Y - 360, DISPLAY_WIDTH, 2)
+    local line = display.newRect(CENTER_X, MAX_Y - 275, DISPLAY_WIDTH, 2)
         line:setFillColor(0.45)
     M.group:insert(line)
 
@@ -164,7 +164,7 @@ M.create = function()
 
     local box = native.newTextField(5000, ZERO_Y + 50, DISPLAY_WIDTH - BOTTOM_WIDTH - 70, system.getInfo 'environment' ~= 'simulator' and 28 or 56)
         timer.performWithDelay(0, function()
-            if M.group.isVisible then
+            if M.group.isVisible and box then
                 box.x = CENTER_X
                 box.isEditable = true
                 box.hasBackground = false
@@ -180,8 +180,8 @@ M.create = function()
         end) box:addEventListener('userInput', textListener)
     M.group:insert(box)
 
-    local width = DISPLAY_WIDTH / 5 - 24
-    local x, y = ZERO_X + 20, MAX_Y - 305
+    local width = CENTER_X == 360 and DISPLAY_WIDTH / 5 - 24 or DISPLAY_WIDTH / 6
+    local x, y = ZERO_X + 20, MAX_Y - 220
 
     for i = 1, #INFO.listType do
         M.group.types[i] = display.newRoundedRect(x, y, width, 62, 11)
@@ -224,7 +224,7 @@ M.create = function()
                 if UTF8.sub(name, UTF8.len(name) - 2, UTF8.len(name)) ~= 'End' then
                     local event = INFO.getType(INFO.listBlock[INFO.listType[i]][j]) == 'events'
 
-                    M.group.types[i].blocks[j] = display.newPolygon(0, 0, BLOCK.getPolygonParams(event, DISPLAY_WIDTH - BOTTOM_WIDTH - 60, event and 102 or 116))
+                    M.group.types[i].blocks[j] = display.newPolygon(0, 0, BLOCK.getPolygonParams(event, DISPLAY_WIDTH - BOTTOM_WIDTH - TOP_WIDTH - 60, event and 102 or 116))
                         M.group.types[i].blocks[j].x = DISPLAY_WIDTH / 2
                         M.group.types[i].blocks[j].y = lastY
                         M.group.types[i].blocks[j]:setFillColor(INFO.getBlockColor(name))

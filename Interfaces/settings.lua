@@ -32,12 +32,37 @@ M.create = function()
 
     local confirm_button = display.newRect((confirm_text.width + MAX_X) / 2 + 10, confirm_text.y, MAX_X - confirm_text.width - 100, 60)
         confirm_button:setFillColor(0, 0, 0, 0.005)
-        confirm_button.text = display.newText(LOCAL.confirm and STR['button.yes'] or STR['button.no'], confirm_button.x, confirm_button.y, 'ubuntu', 30)
+        confirm_button.text = display.newText('', confirm_button.x, confirm_button.y, 'ubuntu', 30)
+        confirm_button.text.text = LOCAL.confirm and STR['button.yes'] or STR['button.no']
     M.group:insert(confirm_button)
     M.group:insert(confirm_button.text)
 
+    local show_ads_text = display.newText(STR['settings.showads'], 20, confirm_button.y + 70, 'ubuntu', 30)
+        show_ads_text.anchorX = 0
+    M.group:insert(show_ads_text)
+
+    local show_ads_button = display.newRect((show_ads_text.width + MAX_X) / 2 + 10, show_ads_text.y, MAX_X - show_ads_text.width - 100, 60)
+        show_ads_button:setFillColor(0, 0, 0, 0.005)
+        show_ads_button.text = display.newText('', show_ads_button.x, show_ads_button.y, 'ubuntu', 30)
+        show_ads_button.text.text = LOCAL.show_ads and STR['button.yes'] or STR['button.no']
+    M.group:insert(show_ads_button)
+    M.group:insert(show_ads_button.text)
+
+    local pos_top_ads_text = display.newText(STR['settings.posads'], 20, show_ads_button.y + 70, 'ubuntu', 30)
+        pos_top_ads_text.anchorX = 0
+    M.group:insert(pos_top_ads_text)
+
+    local pos_top_ads_button = display.newRect((pos_top_ads_text.width + MAX_X) / 2 + 10, pos_top_ads_text.y, MAX_X - pos_top_ads_text.width - 100, 60)
+        pos_top_ads_button:setFillColor(0, 0, 0, 0.005)
+        pos_top_ads_button.text = display.newText('', pos_top_ads_button.x, pos_top_ads_button.y, 'ubuntu', 30)
+        pos_top_ads_button.text.text = LOCAL.pos_top_ads and STR['settings.topads'] or STR['settings.bottomads']
+    M.group:insert(pos_top_ads_button)
+    M.group:insert(pos_top_ads_button.text)
+
     lang_button:addEventListener('touch', function(e) LISTENER(e, 'lang') end)
     confirm_button:addEventListener('touch', function(e) LISTENER(e, 'confirm') end)
+    show_ads_button:addEventListener('touch', function(e) LISTENER(e, 'show') end)
+    pos_top_ads_button:addEventListener('touch', function(e) LISTENER(e, 'pos') end)
 end
 
 return M

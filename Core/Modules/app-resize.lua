@@ -1,5 +1,6 @@
 local function appResize(type)
-    ORIENTATION.lock(type == 'portrait' and 'portrait' or 'landscape')
+    CURRENT_ORIENTATION = type == 'portrait' and 'portrait' or 'landscape'
+    ORIENTATION.lock(CURRENT_ORIENTATION)
     CENTER_X = display.contentCenterX
     CENTER_Y = display.contentCenterY
     DISPLAY_WIDTH = display.actualContentWidth
@@ -12,11 +13,13 @@ local function appResize(type)
     if CENTER_X == 640 then
         TOP_HEIGHT = 0
         ZERO_X = CENTER_X - DISPLAY_WIDTH / 2 + TOP_WIDTH
-        ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2
+        ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2 + (LOCAL.pos_top_ads and ADMOB_HEIGHT * 1.5 or 0)
         MAX_X = CENTER_X + DISPLAY_WIDTH / 2 - BOTTOM_WIDTH
-        MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2
+        MAX_Y = CENTER_Y + DISPLAY_HEIGHT / 2 - (LOCAL.pos_top_ads and 0 or ADMOB_HEIGHT * 1.5)
     elseif CENTER_X == 360 then
         TOP_WIDTH = 0
+        TOP_HEIGHT = LOCAL.pos_top_ads and TOP_HEIGHT + ADMOB_HEIGHT or TOP_HEIGHT
+        BOTTOM_HEIGHT = LOCAL.pos_top_ads and BOTTOM_HEIGHT or BOTTOM_HEIGHT + ADMOB_HEIGHT
         ZERO_X = CENTER_X - DISPLAY_WIDTH / 2
         ZERO_Y = CENTER_Y - DISPLAY_HEIGHT / 2 + TOP_HEIGHT
         MAX_X = CENTER_X + DISPLAY_WIDTH / 2
@@ -24,8 +27,8 @@ local function appResize(type)
     end
 end
 
-Runtime:addEventListener('orientation', function(event)
-    if ALERT then
+function setOrientationApp(event)
+    if ALERT or (GAME and GAME.group.isVisible) then
         local vis = appResize(event.type)
 
         if MENU and MENU.group then
@@ -126,4 +129,6 @@ Runtime:addEventListener('orientation', function(event)
             EDITOR.group.isVisible = vis
         end
     end
-end)
+end
+
+Runtime:addEventListener('orientation', setOrientationApp)

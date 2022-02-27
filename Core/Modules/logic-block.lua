@@ -3,7 +3,7 @@ local INFO = require 'Data.info'
 local M  = {}
 
 M.getTextY = function(count)
-    return count < 3 and -32 or count < 5 and -62 or -92
+    return count < 3 and -32 or count < 5 and -62 or count < 7 and -92 or count < 9 and -122 or -152
 end
 
 M.getParamsNameX = function(count, width)
@@ -11,7 +11,11 @@ M.getParamsNameX = function(count, width)
     or count == 3 and {90 - width / 2, 90 - width / 2, 80}
     or count == 4 and {90 - width / 2, 80, 90 - width / 2, 80}
     or count == 5 and {90 - width / 2, 90 - width / 2, 80, 90 - width / 2, 80}
-    or {90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
+    or count == 6 and {90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
+    or count == 7 and {90 - width / 2, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
+    or count == 8 and {90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
+    or count == 9 and {90 - width / 2, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
+    or {90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80, 90 - width / 2, 80}
 end
 
 M.getParamsLineX = function(count, width)
@@ -20,12 +24,23 @@ M.getParamsLineX = function(count, width)
     or count == 3 and {175 - width / 2, 175 - width / 2, 160}
     or count == 4 and {175 - width / 2, 160, 175 - width / 2, 160}
     or count == 5 and {175 - width / 2, 175 - width / 2, 160, 175 - width / 2, 160}
-    or {175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
+    or count == 6 and {175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
+    or count == 7 and {175 - width / 2, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
+    or count == 8 and {175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
+    or count == 9 and {175 - width / 2, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
+    or {175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160, 175 - width / 2, 160}
 end
 
 M.getParamsNameY = function(count)
-    return count < 3 and {22, 22} or count == 3 and {-8, 52, 52} or count == 4 and {-8, -8, 52, 52}
-    or count == 5 and {-38, 22, 22, 82, 82} or {-38, -38, 22, 22, 82, 82}
+    return count < 3 and {22, 22}
+    or count == 3 and {-8, 52, 52}
+    or count == 4 and {-8, -8, 52, 52}
+    or count == 5 and {-38, 22, 22, 82, 82}
+    or count == 6 and {-38, -38, 22, 22, 82, 82}
+    or count == 7 and {-68, -8, -8, 52, 52, 112, 112}
+    or count == 8 and {-68, -68, -8, -8, 52, 52, 112, 112}
+    or count == 9 and {-98, -38, -38, 22, 22, 82, 82, 142, 142}
+    or {-98, -98, -38, -38, 22, 22, 82, 82, 142, 142}
 end
 
 M.getParamsLineWidth = function(count, width)
@@ -34,7 +49,11 @@ M.getParamsLineWidth = function(count, width)
     or count == 3 and {width - 200, width / 2 - 185, width / 2 - 185}
     or count == 4 and {width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
     or count == 5 and {width - 200, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
-    or {width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
+    or count == 6 and {width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
+    or count == 7 and {width - 200, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
+    or count == 8 and {width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
+    or count == 9 and {width - 200, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
+    or {width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185, width / 2 - 185}
 end
 
 M.getParamsValueText = function(params, i)
@@ -46,7 +65,7 @@ M.getParamsValueText = function(params, i)
             if value[2] == 't' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. '\'' .. UTF8.gsub(value[1], '\n', '\\n') .. '\''
-            elseif value[2] == 'n' or value[2] == 'u' then
+            elseif value[2] == 'n' or value[2] == 'u' or value[2] == 'c' then
                 if UTF8.len(result) > 0 then result = result .. ' ' end
                 result = result .. value[1]
             elseif value[2] == 'vP' or value[2] == 'vS' or value[2] == 'vE' then
@@ -117,7 +136,7 @@ end
 
 M.new = function(name, scroll, group, index, event, params, comment, nested, vars, tables)
     local blockHeight, blockWidth, blockParams, lengthParams = 116, DISPLAY_WIDTH - BOTTOM_WIDTH - TOP_WIDTH - 60, {}, #INFO.listName[name] - 1
-    if not event then blockHeight = lengthParams < 3 and 116 or (lengthParams < 5 and 176 or (lengthParams < 7 and 236 or 296)) end
+    if not event then blockHeight = lengthParams < 3 and 116 or (lengthParams < 5 and 176 or (lengthParams < 7 and 236 or (lengthParams < 9 and 296 or 356))) end
     blockParams = M.getPolygonParams(event, blockWidth, event and 102 or blockHeight)
 
     local y = index == 1 and 50 or group.blocks[index - 1].y + group.blocks[index - 1].block.height / 2 + blockHeight / 2 - 2

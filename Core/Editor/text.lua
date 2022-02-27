@@ -1,4 +1,9 @@
+local CALC = require 'Core.Simulation.calc'
 local M = {}
+
+M.check = function(data)
+    return select(1, pcall(loadstring('pcall(function() local a = ' .. CALC(M.number(data, true)) .. ' end)')))
+end
 
 M.create = function(text, scroll)
     M.text = display.newText({text = text, width = scroll.width - 30, x = 15, y = 15, font = 'ubuntu', fontSize = 40})
@@ -14,7 +19,7 @@ M.set = function(text, scroll)
 end
 
 M.number = function(data, to)
-    if to then
+    if to then table.remove(data, require('Core.Editor.listener').find(data))
         for i = 1, #data do
             if data[i] then if data[i][2] == 'n' then
                 for j = i + 1, #data do
@@ -24,10 +29,14 @@ M.number = function(data, to)
                         for k = i + 1, j - 1 do
                             table.remove(data, i + 1)
                         end break
+                    end if j == #data then
+                        for k = i + 1, j do
+                            table.remove(data, i + 1)
+                        end
                     end
                 end
             end else break end
-        end table.remove(data, require('Core.Editor.listener').find(data))
+        end
     else
         for i = #data, 1, -1 do
             if data[i][2] == 'n' then
@@ -49,7 +58,7 @@ M.gen = function(params, mode)
             text = text .. '"' .. params[i][1] .. '"'
         elseif params[i][2] == 't' then
             text = text .. '\'' .. params[i][1] .. '\''
-        elseif params[i][2] == 's' or params[i][2] == 'n' then
+        elseif params[i][2] == 's' or params[i][2] == 'n' or params[i][2] == 'c' then
             text = text .. params[i][1]
         elseif params[i][2] == 'f' then
             text = text .. STR['editor.list.fun.' .. params[i][1]]
@@ -70,6 +79,8 @@ M.gen = function(params, mode)
         if i ~= #params then
             if not ((params[i][2] == 'n' and params[i + 1][2] == 'n') or (params[i + 1][2] == 's' and params[i + 1][1] == ',')
             or (params[i + 1][2] == 's' and params[i + 1][1] == '(' and (params[i][2] == 'f' or params[i][2] == 'm' or params[i][2] == 'p'))
+            or (params[i + 1][2] == 's' and params[i + 1][1] == '(' and params[i][2] == 'd'
+            and (params[i][1] == 'finger_touching_screen_x' or params[i][1] == 'finger_touching_screen_y'))
             or (params[i + 1][2] == 's' and params[i + 1][1] == ')') or (params[i][2] == 's' and params[i][1] == '(')
             or (params[i + 1][2] == 's' and params[i + 1][1] == ']') or (params[i][2] == 's' and params[i][1] == '[')
             or (params[i][2] == 'n' and params[i + 1][2] == '|' and params[i + 2] and params[i + 2][2] == 'n')

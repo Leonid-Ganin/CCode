@@ -58,17 +58,20 @@ listeners.new_block = function()
     NEW_BLOCK.group:removeSelf()
     NEW_BLOCK.group = nil
     BLOCKS.group.isVisible = true
+    if LOCAL.show_ads then ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'}) end
 end
 
 listeners.editor = function()
     EDITOR.group:removeSelf()
     EDITOR.group = nil
     BLOCKS.group.isVisible = true
+    if LOCAL.show_ads then ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'}) end
 end
 
-listeners.start = function()
-    START.remove()
+listeners.game = function()
+    GAME.remove()
     BLOCKS.group.isVisible = true
+    if LOCAL.show_ads then ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'}) end
 end
 
 listeners.add = function(listener, arg)
@@ -99,8 +102,8 @@ listeners.lis = function(event)
             listeners.new_block()
         elseif EDITOR and EDITOR.group and EDITOR.group.isVisible then
             listeners.editor()
-        elseif START and START.group and START.group.isVisible then
-            listeners.start()
+        elseif GAME and GAME.group and GAME.group.isVisible then
+            listeners.game()
         end
     elseif (event.keyName == 'back' or event.keyName == 'escape') and event.phase == 'up' then
         if listeners.listener then listeners.listener() listeners.listener = nil end

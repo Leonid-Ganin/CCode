@@ -1,18 +1,19 @@
 local listeners = {}
-local INPUT = require 'Core.Modules.interface-input'
 local LIST = require 'Core.Modules.interface-list'
 local INFO = require 'Data.info'
 
 listeners.but_add = function(target)
+    if CENTER_X == 640 and system.getInfo 'environment' ~= 'simulator' then ADMOB.hide() end
     BLOCKS.group.isVisible = false
     NEW_BLOCK = require 'Interfaces.new-block'
     NEW_BLOCK.create()
 end
 
 listeners.but_play = function(target)
+    if system.getInfo 'environment' ~= 'simulator' then ADMOB.hide() end
     BLOCKS.group.isVisible = false
-    START = require 'Core.Simulation.start'
-    START.new()
+    GAME = require 'Core.Simulation.start'
+    GAME.new()
 end
 
 listeners.but_list = function(target)
@@ -265,21 +266,26 @@ listeners.but_okay = function(target)
                         end
                     elseif INFO.listNested[BLOCKS.group.blocks[i].data.name] then
                         local endIndex = #INFO.listNested[BLOCKS.group.blocks[i].data.name]
+                        local insideNestedIndex = i + 1
                         local nestedEndIndex = 1
 
-                        for j = i + 1, #BLOCKS.group.blocks do
-                            local name = BLOCKS.group.blocks[i + 1].data.name
-                            local notNested = not (BLOCKS.group.blocks[i + 1].data.nested and #BLOCKS.group.blocks[i + 1].data.nested > 0)
-                            table.insert(BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[i + 1].data)
-                            BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[i + 1].block.height + 4
-                            BLOCKS.group.blocks[i + 1]:removeSelf() table.remove(BLOCKS.group.blocks, i + 1)
-                            table.remove(data.scripts[CURRENT_SCRIPT].params, i + 1)
+                        for j = insideNestedIndex, #BLOCKS.group.blocks do
+                            if not BLOCKS.group.blocks[insideNestedIndex].data.event then
+                                local name = BLOCKS.group.blocks[insideNestedIndex].data.name
+                                local notNested = not (BLOCKS.group.blocks[insideNestedIndex].data.nested and #BLOCKS.group.blocks[insideNestedIndex].data.nested > 0)
+                                table.insert(BLOCKS.group.blocks[i].data.nested, BLOCKS.group.blocks[insideNestedIndex].data)
+                                BLOCKS.group.scrollHeight = BLOCKS.group.scrollHeight - BLOCKS.group.blocks[insideNestedIndex].block.height + 4
+                                BLOCKS.group.blocks[insideNestedIndex]:removeSelf() table.remove(BLOCKS.group.blocks, insideNestedIndex)
+                                table.remove(data.scripts[CURRENT_SCRIPT].params, insideNestedIndex)
 
-                            if name == BLOCKS.group.blocks[i].data.name and notNested then
-                                nestedEndIndex = nestedEndIndex + 1
-                            elseif name == INFO.listNested[BLOCKS.group.blocks[i].data.name][endIndex] then
-                                nestedEndIndex = nestedEndIndex - 1
-                                if nestedEndIndex == 0 then break end
+                                if name == BLOCKS.group.blocks[i].data.name and notNested then
+                                    nestedEndIndex = nestedEndIndex + 1
+                                elseif name == INFO.listNested[BLOCKS.group.blocks[i].data.name][endIndex] then
+                                    nestedEndIndex = nestedEndIndex - 1
+                                    if nestedEndIndex == 0 then break end
+                                end
+                            else
+                                insideNestedIndex = insideNestedIndex + 1
                             end
                         end
                     end

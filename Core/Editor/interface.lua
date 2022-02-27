@@ -82,7 +82,7 @@ M.create = function(blockName, blockIndex, paramsData, paramsIndex, newOrientati
 
     local target = BLOCKS.group.blocks[blockIndex]
     local length = #INFO.listName[target.data.name] - 1
-    local twidth, size = CENTER_X == 640 and (MAX_X - ZERO_X - 844) * 1.2 or target.block.width, CENTER_X == 640 and 1.2 or 1.0
+    local twidth, size = CENTER_X == 640 and (MAX_X - ZERO_X - 844) * 1.5 or target.block.width, CENTER_X == 640 and 1.5 or 1.0
     local polygon = BLOCK.getPolygonParams(target.data.event, twidth, target.data.event and 102 or target.block.height)
     local comment, params, name = target.data.comment, target.data.params, target.data.name
     local height = target.data.event and target.block.height / size + 340 or target.block.height / size + 264
@@ -111,7 +111,7 @@ M.create = function(blockName, blockIndex, paramsData, paramsIndex, newOrientati
                     e.target.click = false
                     e.target:setFillColor(1)
                     e.target.alpha = 0.005
-                    LISTENER.rect(e.target.index, GET_GAME_CODE(CURRENT_LINK), COPY_TABLE(M.restart))
+                    LISTENER.rect(e.target.index, COPY_TABLE(M.restart), COPY_TABLE(M.data))
                 end
             end
 

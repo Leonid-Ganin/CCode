@@ -283,12 +283,12 @@ local function updMoveLogicBlock(e, group, scroll)
                         table.insert(M.data.scripts[CURRENT_SCRIPT].params, M.index, block)
                     end
                 elseif e.target.y < M.lastY then
-                    if group.blocks[M.index - 1] and (M.index ~= 2 or e.target.data.event) then
+                    if group.blocks[M.index - 1] then
                         local countBlocksReplace = 0
                         local block = M.data.scripts[CURRENT_SCRIPT].params[M.index]
 
                         for i = M.index - 1, 1, -1 do
-                            if group.blocks[i] and group.blocks[i].y > e.target.y then
+                            if group.blocks[i] and group.blocks[i].y > e.target.y and (i > 1 or e.target.data.event) then
                                 group.blocks[i].y = group.blocks[i].y + (e.target.block.height - 4 + addHeight)
                                 countBlocksReplace = countBlocksReplace + 1
                             else break end

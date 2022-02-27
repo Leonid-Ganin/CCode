@@ -13,13 +13,32 @@ M.find = function(data)
     end
 end
 
-M.rect = function(index, data, restart)
+M.rect = function(index, restart, data)
     if INFO.listName[restart[1]][index + 1] == 'value' then
-        restart[5], restart[4] = true, index
-        restart[3] = COPY_TABLE(data.scripts[CURRENT_SCRIPT].params[restart[2]].params[restart[4]])
-        EDITOR.group:removeSelf() EDITOR.group = nil
-        EDITOR.create(unpack(restart))
-        EDITOR.group.isVisible = true
+        if TEXT.check(COPY_TABLE(data)) then
+            local param = TEXT.number(data, true)
+            local data = GET_GAME_CODE(CURRENT_LINK)
+            local blockIndex, paramsIndex = restart[2], restart[4]
+            local params = data.scripts[CURRENT_SCRIPT].params[blockIndex].params
+
+            params[paramsIndex] = COPY_TABLE(param)
+            BLOCKS.group.blocks[blockIndex].data.params = COPY_TABLE(params)
+            BLOCKS.group.blocks[blockIndex].params[paramsIndex].value.text = BLOCK.getParamsValueText(params, paramsIndex)
+            SET_GAME_CODE(CURRENT_LINK, data)
+
+            restart[5], restart[4] = true, index
+            restart[3] = COPY_TABLE(data.scripts[CURRENT_SCRIPT].params[restart[2]].params[restart[4]])
+            EDITOR.group:removeSelf() EDITOR.group = nil
+            EDITOR.create(unpack(restart))
+            EDITOR.group.isVisible = true
+        else
+            EDITOR.group[9]:setIsLocked(true, 'vertical')
+            EDITOR.group[66]:setIsLocked(true, 'vertical')
+            WINDOW.new(STR['editor.window.error'], {STR['editor.button.error1'], STR['editor.button.error2']}, function(e)
+                EDITOR.group[9]:setIsLocked(false, 'vertical')
+                EDITOR.group[66]:setIsLocked(false, 'vertical')
+            end, 3)
+        end
     end
 end
 
@@ -166,19 +185,28 @@ M['Hide'] = function(data, cursor, backup)
 end
 
 M['Ok'] = function(data, cursor, backup)
-    local param = TEXT.number(data, true)
-    local data = GET_GAME_CODE(CURRENT_LINK)
-    local blockIndex, paramsIndex = EDITOR.restart[2], EDITOR.restart[4]
-    local params = data.scripts[CURRENT_SCRIPT].params[blockIndex].params
+    if TEXT.check(COPY_TABLE(data)) then
+        local param = TEXT.number(data, true)
+        local data = GET_GAME_CODE(CURRENT_LINK)
+        local blockIndex, paramsIndex = EDITOR.restart[2], EDITOR.restart[4]
+        local params = data.scripts[CURRENT_SCRIPT].params[blockIndex].params
 
-    params[paramsIndex] = COPY_TABLE(param)
-    BLOCKS.group.blocks[blockIndex].data.params = COPY_TABLE(params)
-    BLOCKS.group.blocks[blockIndex].params[paramsIndex].value.text = BLOCK.getParamsValueText(params, paramsIndex)
-    SET_GAME_CODE(CURRENT_LINK, data)
+        params[paramsIndex] = COPY_TABLE(param)
+        BLOCKS.group.blocks[blockIndex].data.params = COPY_TABLE(params)
+        BLOCKS.group.blocks[blockIndex].params[paramsIndex].value.text = BLOCK.getParamsValueText(params, paramsIndex)
+        SET_GAME_CODE(CURRENT_LINK, data)
 
-    EDITOR.group:removeSelf()
-    EDITOR.group = nil
-    BLOCKS.group.isVisible = true
+        EDITOR.group:removeSelf()
+        EDITOR.group = nil
+        BLOCKS.group.isVisible = true
+    else
+        EDITOR.group[9]:setIsLocked(true, 'vertical')
+        EDITOR.group[66]:setIsLocked(true, 'vertical')
+        WINDOW.new(STR['editor.window.error'], {STR['editor.button.error1'], STR['editor.button.error2']}, function(e)
+            EDITOR.group[9]:setIsLocked(false, 'vertical')
+            EDITOR.group[66]:setIsLocked(false, 'vertical')
+        end, 3) return data, cursor, backup
+    end
 end
 
 local syms = {'+', '-', '*', '/', '.', ',', '(', ')', '[', ']', '='}

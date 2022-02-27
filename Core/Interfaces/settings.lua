@@ -1,6 +1,42 @@
 local LIST = require 'Core.Modules.interface-list'
 local listeners = {}
 
+listeners.pos = function(e)
+    local list = LOCAL.pos_top_ads and {STR['settings.topads'], STR['settings.bottomads']} or {STR['settings.bottomads'], STR['settings.topads']}
+
+    LIST.new(list, e.target.x, e.target.y - e.target.height / 2, 'down', function(e)
+        if e.index > 0 then
+            LOCAL.pos_top_ads = e.text == STR['settings.topads'] ADMOB.hide()
+            if LOCAL.show_ads then ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'}) end
+
+            SETTINGS.group:removeSelf()
+            SETTINGS.group = nil
+            SETTINGS.create()
+            SETTINGS.group.isVisible = true
+
+            NEW_DATA()
+        end
+    end, nil, nil, 0.5)
+end
+
+listeners.show = function(e)
+    local list = LOCAL.show_ads and {STR['button.yes'], STR['button.no']} or {STR['button.no'], STR['button.yes']}
+
+    LIST.new(list, e.target.x, e.target.y - e.target.height / 2, 'down', function(e)
+        if e.index > 0 then
+            LOCAL.show_ads = e.text == STR['button.yes'] ADMOB.hide()
+            if LOCAL.show_ads then ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'}) end
+
+            SETTINGS.group:removeSelf()
+            SETTINGS.group = nil
+            SETTINGS.create()
+            SETTINGS.group.isVisible = true
+
+            NEW_DATA()
+        end
+    end, nil, nil, 0.5)
+end
+
 listeners.confirm = function(e)
     local list = LOCAL.confirm and {STR['button.yes'], STR['button.no']} or {STR['button.no'], STR['button.yes']}
 

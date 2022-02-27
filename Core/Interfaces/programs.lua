@@ -1,5 +1,4 @@
 local listeners = {}
-local INPUT = require 'Core.Modules.interface-input'
 local LIST = require 'Core.Modules.interface-list'
 
 listeners.but_add = function(target)

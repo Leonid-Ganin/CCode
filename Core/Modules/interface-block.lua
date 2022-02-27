@@ -45,6 +45,7 @@ local listener = function(e, scroll, group, type)
                     PROGRAM.create(e.target.text.text)
                     PROGRAM.group.isVisible = true
 
+
                     CURRENT_LINK = e.target.link
                     LOCAL.last = e.target.text.text
                     MENU.group[9].text = LOCAL.last
@@ -244,7 +245,7 @@ local listener = function(e, scroll, group, type)
                         local new_font = io.open(DOC_DIR .. '/' .. CURRENT_LINK .. '/Fonts/' .. e.target.link, 'rb')
                         local main_font = io.open(RES_PATH .. '/' .. e.target.link, 'wb')
 
-                        if main_font then
+                        if main_font and new_font then
                             main_font:write(new_font:read('*a'))
                             io.close(new_font)
                             io.close(main_font)

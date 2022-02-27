@@ -1,4 +1,4 @@
-LANG, STR = {}, {}
+LANG, STR, MAIN = {}, {}, display.newGroup()
 
 RESIZE = require 'Core.Modules.app-resize'
 INPUT = require 'Core.Modules.interface-input'
@@ -6,6 +6,7 @@ WINDOW = require 'Core.Modules.interface-window'
 EXITS = require 'Core.Interfaces.exits'
 FILE = require 'plugin.cnkFileManager'
 ORIENTATION = require 'plugin.orientation'
+ADMOB = require 'plugin.admob'
 SVG = require 'plugin.nanosvg'
 UTF8 = require 'plugin.utf8'
 JSON = require 'json'
@@ -14,21 +15,22 @@ WIDGET = require 'widget'
 LOCAL = require 'Data.local'
 LANG.en = require 'Strings.en'
 LANG.ru = require 'Strings.ru'
-LANG.pt = require 'Strings.pt'
-LANGS = {'en', 'ru', 'pt'}
+LANGS = {'en', 'ru'}
 for i = 1, #LANGS do if LANGS[i] == LOCAL.lang then break elseif i == #LANGS then LOCAL.lang = 'en' end end
 
-BUILD = 1114
+BUILD = 1124
 ALERT = true
 CENTER_Z = 0
 TOP_WIDTH = 0
 INDEX_LIST = 0
 MORE_LIST = true
+ADMOB_HEIGHT = 0
 LAST_CHECKBOX = 0
 ORIENTATION.init()
 CURRENT_SCRIPT = 0
 CURRENT_LINK = 'App1'
 STR = LANG[LOCAL.lang]
+CURRENT_ORIENTATION = 'portrait'
 CENTER_X = display.contentCenterX
 CENTER_Y = display.contentCenterY
 DISPLAY_WIDTH = display.actualContentWidth
@@ -157,11 +159,28 @@ NEW_APP_CODE = function(title, link)
     }
 end
 
+local function adListener(event)
+    if event.phase == 'init' then
+        ADMOB.load('banner', {adUnitId='ca-app-pub-3712284233366817/8879724699', childSafe = true})
+    elseif event.phase == 'loaded' and event.type == 'banner' and LOCAL.show_ads then
+        ADMOB.show('banner', {bgColor = '#0f0f11', y = LOCAL.pos_top_ads and 'top' or 'bottom'})
+    elseif event.phase == 'displayed' or event.phase == 'hidden' then
+        ADMOB_HEIGHT = event.phase == 'hidden' and 0 or ADMOB.height() / 2
+        setOrientationApp({type = CURRENT_ORIENTATION})
+    end
+end
+
 WIDGET.setTheme('widget_theme_android_holo_dark')
 display.setDefault('background', 0.15, 0.15, 0.17)
 display.setStatusBar(display.HiddenStatusBar)
-math.round = function(num) return tonumber(string.match(tostring(num), '(.*)%.')) end
-if system.getInfo 'environment' == 'simulator' then JSON.encode = JSON.prettify end
+math.round = function(num) return tonumber(string.match(tostring(num), '(.*)%.')) or num end
+math.hex = function(hex) local r, g, b = hex:match('(..)(..)(..)') return {tonumber(r, 16), tonumber(g, 16), tonumber(b, 16)} end
+string.trim = function(s) return UTF8.gsub(UTF8.gsub(s, '^%s+', ''), '%s+$', '') end
+string.trimLeft = function(s) return UTF8.gsub(s, '^%s+', '') end
+string.trimRight = function(s) return UTF8.gsub(s, '%s+$', '') end
+if system.getInfo 'environment' == 'simulator' then JSON.encode = JSON.prettify
+else ADMOB.init(adListener, {appId="ca-app-pub-3712284233366817~8085200542", testMode = true}) end
+-- Runtime:addEventListener('unhandledError', function(event) return true end)
 
 GET_GLOBAL_TABLE = function()
     return {
@@ -179,6 +198,6 @@ GET_GLOBAL_TABLE = function()
         al = _G.al, rawset = _G.rawset, easing = _G.easing, coronabaselib = _G.coronabaselib, math = _G.math,
         BOTTOM_WIDTH = _G.BOTTOM_WIDTH, cloneArray = _G.cloneArray, DISPLAY_WIDTH = _G.DISPLAY_WIDTH, type = _G.type,
         audio = _G.audio, pairs = _G.pairs, select = _G.select, rawget = _G.rawget, Runtime = _G.Runtime,
-        collectgarbage = _G.collectgarbage, getmetatable = _G.getmetatable, error = _G.error,
+        collectgarbage = _G.collectgarbage, getmetatable = _G.getmetatable, error = _G.error, MAIN = _G.MAIN
     }
 end

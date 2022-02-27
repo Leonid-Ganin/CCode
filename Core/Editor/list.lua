@@ -58,6 +58,11 @@ local function getId(y)
     return (y - 35) / 70 + 1
 end
 
+local getFontSize getFontSize = function(width, text, size)
+    local checkText = display.newText(text, 0, 5000, 'ubuntu', size)
+    if checkText.width > width - 30 then checkText:removeSelf() return getFontSize(width, text, size - 1) else checkText:removeSelf() return size end
+end
+
 listeners.set = function(target, buttons, isData, isList)
     if buttons and (isList and #buttons.names > 0 or #buttons > 0) then
         target.isOpen = not target.isOpen
@@ -70,7 +75,7 @@ listeners.set = function(target, buttons, isData, isList)
             local listButtonsY = target.y + 70
 
             for i = 1, #buttons.names do
-                local j, i = i, i + getId(target.y)
+                local j, i, text = i, i + getId(target.y), buttons.names[i]
                 table.insert(listScroll.buttons, i, {})
 
                 listScroll.buttons[i] = display.newRect(listButtonsX, listButtonsY, listScroll.width, 70)
@@ -85,7 +90,7 @@ listeners.set = function(target, buttons, isData, isList)
                     end listScroll.buttons[i].count = 0
                 listScroll:insert(listScroll.buttons[i])
 
-                listScroll.buttons[i].text = display.newText(buttons.names[j], 20, listButtonsY, 'ubuntu', 28)
+                listScroll.buttons[i].text = display.newText(text, 20, listButtonsY, 'ubuntu', getFontSize(listScroll.width, text, 28))
                     if isData then
                         listScroll.buttons[i].text.id = getId(target.y) == 1
                         and (j == 1 and 'event' or j == 2 and 'script' or 'project')
